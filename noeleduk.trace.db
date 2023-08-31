@@ -1,0 +1,12 @@
+2023-08-29 21:47:29 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select user0_.id as id1_0_, user0_.avatar as avatar2_0_, user0_.cpf as cpf3_0_, user0_.document as document4_0_, user0_.edukoins as edukoins5_0_, user0_.email as email6_0_, user0_.name as name7_0_, user0_.password as password8_0_, user0_.phone as phone9_0_, user0_.points as points10_0_, user0_.rg as rg11_0_, user0_.role as role12_0_, user0_.token as token13_0_, user0_.token_expiration as token_e14_0_ from userEntities user0_ [42104-214]
+2023-08-29 21:47:52 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select user0_.id as id1_0_, user0_.avatar as avatar2_0_, user0_.cpf as cpf3_0_, user0_.document as document4_0_, user0_.edukoins as edukoins5_0_, user0_.email as email6_0_, user0_.name as name7_0_, user0_.password as password8_0_, user0_.phone as phone9_0_, user0_.points as points10_0_, user0_.rg as rg11_0_, user0_.role as role12_0_, user0_.token as token13_0_, user0_.token_expiration as token_e14_0_ from userEntities user0_ [42104-214]
+2023-08-29 21:48:02 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+select user0_.id as id1_0_, user0_.avatar as avatar2_0_, user0_.cpf as cpf3_0_, user0_.document as document4_0_, user0_.edukoins as edukoins5_0_, user0_.email as email6_0_, user0_.name as name7_0_, user0_.password as password8_0_, user0_.phone as phone9_0_, user0_.points as points10_0_, user0_.rg as rg11_0_, user0_.role as role12_0_, user0_.token as token13_0_, user0_.token_expiration as token_e14_0_ from userEntities user0_ [42104-214]
+2023-08-29 21:50:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (this database is empty); SQL statement:
+insert into userEntities (avatar, cpf, document, edukoins, email, name, password, phone, points, rg, role, token, token_expiration, id) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) [42104-214]
