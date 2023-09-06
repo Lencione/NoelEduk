@@ -1,9 +1,7 @@
 package br.com.noeleduk.noelproject.Entities;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -17,7 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Table(name = "users")
 public class UserEntity {
-
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")

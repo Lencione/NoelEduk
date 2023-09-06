@@ -3,7 +3,7 @@ package br.com.noeleduk.noelproject.Dto.User;
 import lombok.Data;
 
 @Data
-public class UserResponseDto {
+public class GetUserDto {
     private String name;
     private String email;
     private String document;

@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class AppicationConfigurations {
+public class ApplicationConfigurations {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
