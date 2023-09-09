@@ -2,6 +2,8 @@ package br.com.noeleduk.noelproject.Services;
 
 import br.com.noeleduk.noelproject.Dto.User.CreateUserDto;
 import br.com.noeleduk.noelproject.Dto.User.GetUserDto;
+import br.com.noeleduk.noelproject.Dto.User.LoggedUserDto;
+import br.com.noeleduk.noelproject.Dto.User.LoginRequestDto;
 import br.com.noeleduk.noelproject.Entities.UserEntity;
 import br.com.noeleduk.noelproject.Repositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -9,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -46,7 +48,7 @@ public class UserService {
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public GetUserDto createUser(CreateUserDto createUserDTO) {
+  public LoggedUserDto createUser(CreateUserDto createUserDTO) {
 
     if (userRepository.existsByEmail(createUserDTO.getEmail())) {
       throw new RuntimeException("O E-mail ja esta em uso!");
@@ -77,8 +79,9 @@ public class UserService {
     userEntity.setAvatar("");
     userEntity.setPoints(0);
     userEntity = userRepository.save(userEntity);
-    return modelMapper.map(userEntity, GetUserDto.class);
-
+    userEntity.setToken(UUID.randomUUID().toString());
+    userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
+    return modelMapper.map(userEntity, LoggedUserDto.class);
   }
 
   public UserEntity updateUser(UUID id, UserEntity userEntity) {
@@ -86,11 +89,34 @@ public class UserService {
       userEntity.setId(id);
       return userRepository.save(userEntity);
     }
-    return null; // Or throw an exception indicating that the user doesn't exist
+    return null;
   }
 
   public void deleteUser(UUID id) {
     userRepository.deleteById(id);
+  }
+
+  public LoggedUserDto login(LoginRequestDto user) {
+    UserEntity userEntity = userRepository.findByEmail(user.getEmail());
+    if (userEntity == null) {
+      throw new RuntimeException("User not found");
+    }
+    if (passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
+      userEntity.setToken(UUID.randomUUID().toString());
+      userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
+
+      userRepository.save(userEntity);
+      return modelMapper.map(userEntity, LoggedUserDto.class);
+    }
+    throw new RuntimeException("Invalid password");
+  }
+
+  public boolean validateToken(String token) {
+    UserEntity user = userRepository.findByToken(token);
+    if(user != null){
+      return !user.getTokenExpiration().isBefore(LocalDateTime.now());
+    }
+    return false;
   }
 
 

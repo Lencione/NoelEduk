@@ -22,6 +22,7 @@ public class UserEntity {
     private String email;
     private String password;
     private String token;
+    @Column(name = "token_expiration", nullable = true)
     private LocalDateTime tokenExpiration;
     private String cpf;
     private String rg;
