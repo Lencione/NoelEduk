@@ -1,4 +1,4 @@
-package br.com.noeleduk.noelproject.Dto;
+package br.com.noeleduk.noelproject.Dto.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
