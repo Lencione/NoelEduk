@@ -9,4 +9,5 @@ import java.util.Date;
 public class LoggedUserDto {
   private String token;
   private LocalDateTime tokenExpiration;
+  private String role;
 }

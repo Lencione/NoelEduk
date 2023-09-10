@@ -17,45 +17,45 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class UserService {
+public class TeacherService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
 
   @Autowired
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+  public TeacherService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
   }
 
-  public List<GetUserDto> getAllUsers() {
-    List<UserEntity> users = userRepository.findAllStudents();
+  public List<GetUserDto> getAllTeachers() {
+    List<UserEntity> users = userRepository.findAllTeachers();
 
     if (users.isEmpty()) {
-      throw new RuntimeException("Users not found");
+      throw new RuntimeException("Teachers not found");
     }
 
     return users.stream().map(user -> modelMapper.map(user, GetUserDto.class))
             .collect(Collectors.toList());
   }
 
-  public GetUserDto getUserByEmail(String email) {
-    UserEntity user = userRepository.findByEmail(email);
+  public GetUserDto getTeacherByEmail(String email) {
+    UserEntity user = userRepository.findTeacherByEmail(email);
     if (user == null) {
-      throw new RuntimeException("User not found");
+      throw new RuntimeException("Teacher not found");
     }
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public LoggedUserDto createUser(CreateUserDto createUserDTO) {
+  public LoggedUserDto createTeacher(CreateUserDto createUserDTO) {
 
     if (userRepository.existsByEmail(createUserDTO.getEmail())) {
       throw new RuntimeException("O E-mail ja esta em uso!");
     }
 
     if (userRepository.existsByDocument(createUserDTO.getDocument())) {
-      throw new RuntimeException("O RA ja esta em uso");
+      throw new RuntimeException("O Registro ja esta em uso");
     }
 
     if (userRepository.existsByCpf(createUserDTO.getCpf())) {
@@ -73,7 +73,7 @@ public class UserService {
     userEntity.setCpf(createUserDTO.getCpf());
     userEntity.setRg(createUserDTO.getRg());
     userEntity.setPhone(createUserDTO.getPhone());
-    userEntity.setRole("student");
+    userEntity.setRole("teacher");
     userEntity.setDocument(createUserDTO.getDocument());
     userEntity.setEdukoins(0);
     userEntity.setAvatar("");
@@ -84,28 +84,12 @@ public class UserService {
     return modelMapper.map(userEntity, LoggedUserDto.class);
   }
 
-  public LoggedUserDto login(LoginRequestDto user) {
-    UserEntity userEntity = userRepository.findByEmail(user.getEmail());
-    if (userEntity == null) {
-      throw new RuntimeException("User not found");
-    }
-    if (passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
-      userEntity.setToken(UUID.randomUUID().toString());
-      userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
-
-      userRepository.save(userEntity);
-      return modelMapper.map(userEntity, LoggedUserDto.class);
-    }
-    throw new RuntimeException("Invalid password");
-  }
-
   public boolean validateToken(String token) {
-    UserEntity user = userRepository.findByToken(token);
-    if(user != null){
-      return !user.getTokenExpiration().isBefore(LocalDateTime.now());
+    UserEntity teacher = userRepository.findTeacherByToken(token);
+    if(teacher != null){
+      return !teacher.getTokenExpiration().isBefore(LocalDateTime.now());
     }
     return false;
   }
-
 
 }
