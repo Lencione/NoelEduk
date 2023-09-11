@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name="Classes")
+@Table(name="classes")
 public class ClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,7 +28,4 @@ public class ClassEntity {
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private List<SubjectEntity> subjects;
-
-
-
 }
