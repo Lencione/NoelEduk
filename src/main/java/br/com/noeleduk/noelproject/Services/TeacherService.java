@@ -3,7 +3,6 @@ package br.com.noeleduk.noelproject.Services;
 import br.com.noeleduk.noelproject.Dto.User.CreateUserDto;
 import br.com.noeleduk.noelproject.Dto.User.GetUserDto;
 import br.com.noeleduk.noelproject.Dto.User.LoggedUserDto;
-import br.com.noeleduk.noelproject.Dto.User.LoginRequestDto;
 import br.com.noeleduk.noelproject.Entities.UserEntity;
 import br.com.noeleduk.noelproject.Repositories.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -18,19 +17,19 @@ import java.util.stream.Collectors;
 
 @Service
 public class TeacherService {
-  private final UserRepository userRepository;
+  private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
 
   @Autowired
-  public TeacherService(UserRepository userRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
-    this.userRepository = userRepository;
+  public TeacherService(UserRepository repository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    this.repository = repository;
     this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
   }
 
   public List<GetUserDto> getAllTeachers() {
-    List<UserEntity> users = userRepository.findAllTeachers();
+    List<UserEntity> users = repository.findAllTeachers();
 
     if (users.isEmpty()) {
       throw new RuntimeException("Teachers not found");
@@ -41,7 +40,14 @@ public class TeacherService {
   }
 
   public GetUserDto getTeacherByEmail(String email) {
-    UserEntity user = userRepository.findTeacherByEmail(email);
+    UserEntity user = repository.findTeacherByEmail(email);
+    if (user == null) {
+      throw new RuntimeException("Teacher not found");
+    }
+    return modelMapper.map(user, GetUserDto.class);
+  }
+  public GetUserDto getTeacherByDocument(String document) {
+    UserEntity user = repository.findTeacherByDocument(document);
     if (user == null) {
       throw new RuntimeException("Teacher not found");
     }
@@ -50,19 +56,19 @@ public class TeacherService {
 
   public LoggedUserDto createTeacher(CreateUserDto createUserDTO) {
 
-    if (userRepository.existsByEmail(createUserDTO.getEmail())) {
+    if (repository.existsByEmail(createUserDTO.getEmail())) {
       throw new RuntimeException("O E-mail ja esta em uso!");
     }
 
-    if (userRepository.existsByDocument(createUserDTO.getDocument())) {
+    if (repository.existsByDocument(createUserDTO.getDocument())) {
       throw new RuntimeException("O Registro ja esta em uso");
     }
 
-    if (userRepository.existsByCpf(createUserDTO.getCpf())) {
+    if (repository.existsByCpf(createUserDTO.getCpf())) {
       throw new RuntimeException("O CPF ja esta em uso");
     }
 
-    if (userRepository.existsByRg(createUserDTO.getRg())) {
+    if (repository.existsByRg(createUserDTO.getRg())) {
       throw new RuntimeException("O RG ja esta em uso");
     }
 
@@ -78,18 +84,20 @@ public class TeacherService {
     userEntity.setEdukoins(0);
     userEntity.setAvatar("");
     userEntity.setPoints(0);
-    userEntity = userRepository.save(userEntity);
+    userEntity = repository.save(userEntity);
     userEntity.setToken(UUID.randomUUID().toString());
     userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
     return modelMapper.map(userEntity, LoggedUserDto.class);
   }
 
   public boolean validateToken(String token) {
-    UserEntity teacher = userRepository.findTeacherByToken(token);
+    UserEntity teacher = repository.findTeacherByToken(token);
     if(teacher != null){
       return !teacher.getTokenExpiration().isBefore(LocalDateTime.now());
     }
     return false;
   }
+
+
 
 }

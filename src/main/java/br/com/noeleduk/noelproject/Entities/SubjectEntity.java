@@ -8,13 +8,14 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "Subjects")
+@Table(name = "subjects")
 public class SubjectEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String name;
+    private int week_day;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")

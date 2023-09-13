@@ -22,10 +22,10 @@ public class ClassController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<ResponseDto> createClass(@RequestBody ClassEntity classEntity) {
+  public ResponseEntity<ResponseDto> createClass(@RequestBody ClassEntity request) {
     try {
       return ResponseEntity.ok(
-              new ResponseDto("Created class successfully", true, classService.createClass(classEntity))
+              new ResponseDto("Created class successfully", true, classService.createClass(request))
       );
     } catch (Exception e) {
       return ResponseEntity.badRequest().body(
@@ -35,10 +35,10 @@ public class ClassController {
   }
 
   @PostMapping("/addUser")
-  public ResponseEntity<ResponseDto> addStudentToClass(@RequestBody AddStudentToClassDto dto) {
+  public ResponseEntity<ResponseDto> addStudentToClass(@RequestBody AddStudentToClassDto request) {
     try{
       return ResponseEntity.ok(
-              new ResponseDto("User added to class successfully", true, classService.addStudentToClass(dto))
+              new ResponseDto("User added to class successfully", true, classService.addStudentToClass(request))
       );
     }catch (Exception e){
       return ResponseEntity.badRequest().body(

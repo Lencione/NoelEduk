@@ -48,4 +48,7 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
   @Query("SELECT u FROM UserEntity u WHERE u.token = ?1 and u.role = 'teacher'")
   UserEntity findTeacherByToken(String token);
+
+  @Query("SELECT U FROM UserEntity U WHERE U.document = ?1 AND U.role = 'teacher'")
+  UserEntity findTeacherByDocument(String document);
 }

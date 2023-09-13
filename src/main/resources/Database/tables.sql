@@ -40,6 +40,7 @@ CREATE TABLE Subjects (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT,
     teacher_id UUID REFERENCES Users(id) NOT NULL,
+    week_day INT NOT NULL,
     google_code TEXT NULL
 );
 
