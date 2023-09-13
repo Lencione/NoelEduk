@@ -9,29 +9,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ClassService {
-  private final ClassRepository classRepository;
+  private final ClassRepository repository;
   private final UserRepository userRepository;
 
   @Autowired
-  public ClassService(ClassRepository classRepository, UserRepository userRepository) {
-    this.classRepository = classRepository;
+  public ClassService(ClassRepository repository, UserRepository userRepository) {
+    this.repository = repository;
     this.userRepository = userRepository;
   }
 
   public List<ClassEntity> getAllClasses() {
-    return classRepository.findAll();
+    return repository.findAll();
   }
 
   public ClassEntity createClass(ClassEntity classEntity) {
-    return classRepository.save(classEntity);
+    return repository.save(classEntity);
   }
 
   public boolean addStudentToClass(AddStudentToClassDto dto) {
-    ClassEntity classEntity = classRepository.findClassEntityById(dto.getClassId());
+    ClassEntity classEntity = repository.findClassEntityById(dto.getClassId());
     UserEntity user = userRepository.findStudentByDocument(dto.getStudentRa());
 
     if (classEntity == null) {
@@ -51,7 +50,7 @@ public class ClassService {
     }
 
     classEntity.getStudents().add(user);
-    classRepository.save(classEntity);
+    repository.save(classEntity);
     return true;
   }
 }

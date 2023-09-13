@@ -14,8 +14,12 @@ public class LessonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
     private Date date;
+    private String description;
+    private boolean active = true;
+    private String justification;
+    private boolean exam = false;
+
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
@@ -24,7 +28,5 @@ public class LessonEntity {
     @ManyToMany(mappedBy = "lessons")
     private List<UserEntity> users;
 
-    private boolean active = true;
-    private String justification;
-    private boolean exam;
+
 }
