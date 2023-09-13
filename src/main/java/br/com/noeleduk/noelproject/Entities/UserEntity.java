@@ -42,4 +42,8 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id"))
     private List<LessonEntity> lessons;
+
+    @OneToMany(mappedBy = "teacher")
+    private List<SubjectEntity> subjects;
+
 }
