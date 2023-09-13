@@ -40,6 +40,8 @@ CREATE TABLE Subjects (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT,
     teacher_id UUID REFERENCES Users(id) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
     week_day INT NOT NULL,
     google_code TEXT NULL
 );
@@ -50,9 +52,12 @@ CREATE TABLE Classes_Subjects (
     class_id UUID REFERENCES Classes(id) NOT NULL
 );
 
+
+
 CREATE TABLE Lessons (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     date DATE NOT NULL,
+    description TEXT NULL,
     subject_id UUID REFERENCES Subjects(id) NOT NULL,
     active BOOLEAN DEFAULT true,
     justification TEXT NULL,

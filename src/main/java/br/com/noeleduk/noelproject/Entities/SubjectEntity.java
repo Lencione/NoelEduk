@@ -3,6 +3,7 @@ package br.com.noeleduk.noelproject.Entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ public class SubjectEntity {
 
     private String name;
     private int week_day;
+    private Date start_date;
+    private Date end_date;
 
     @ManyToOne
     @JoinColumn(name = "teacher_id")
