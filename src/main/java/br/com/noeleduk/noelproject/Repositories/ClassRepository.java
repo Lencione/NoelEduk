@@ -11,5 +11,5 @@ import java.util.UUID;
 @Repository
 public interface ClassRepository extends JpaRepository<ClassEntity,UUID> {
   @Query("SELECT C FROM ClassEntity C WHERE C.id = ?1")
-  ClassEntity findClassEntityById(UUID id);
+  ClassEntity findClassById(UUID id);
 }

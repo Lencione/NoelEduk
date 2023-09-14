@@ -30,7 +30,7 @@ public class ClassService {
   }
 
   public boolean addStudentToClass(AddStudentToClassDto dto) {
-    ClassEntity classEntity = repository.findClassEntityById(dto.getClassId());
+    ClassEntity classEntity = repository.findClassById(dto.getClassId());
     UserEntity user = userRepository.findStudentByDocument(dto.getStudentRa());
 
     if (classEntity == null) {
