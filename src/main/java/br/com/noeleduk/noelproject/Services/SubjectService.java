@@ -1,15 +1,19 @@
 package br.com.noeleduk.noelproject.Services;
 
 import br.com.noeleduk.noelproject.Dto.Lessons.CreateLessonDto;
+import br.com.noeleduk.noelproject.Dto.Subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.Dto.Subjects.CreateSubjectDto;
+import br.com.noeleduk.noelproject.Entities.ClassEntity;
 import br.com.noeleduk.noelproject.Entities.SubjectEntity;
 import br.com.noeleduk.noelproject.Entities.UserEntity;
+import br.com.noeleduk.noelproject.Repositories.ClassRepository;
 import br.com.noeleduk.noelproject.Repositories.SubjectRepository;
 import br.com.noeleduk.noelproject.Repositories.UserRepository;
+import jdk.swing.interop.SwingInterOpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -20,11 +24,19 @@ public class SubjectService {
   private final UserRepository userRepository;
   private final LessonService lessonService;
 
+  private final ClassRepository classRepository;
+
   @Autowired
-  public SubjectService(SubjectRepository repository, UserRepository userRepository, LessonService lessonService) {
+  public SubjectService(
+          SubjectRepository repository,
+          UserRepository userRepository,
+          LessonService lessonService,
+          ClassRepository classRepository
+  ) {
     this.repository = repository;
     this.userRepository = userRepository;
     this.lessonService = lessonService;
+    this.classRepository = classRepository;
   }
 
   public boolean create(CreateSubjectDto request) {
@@ -36,8 +48,29 @@ public class SubjectService {
     return true;
   }
 
+  @Transactional
+  public boolean addClass(AddClassToSubjectDto request){
+    SubjectEntity subject = repository.findSubjectById(request.getSubject_id());
+    if(subject == null){
+      throw new RuntimeException("Invalid subject id");
+    }
+
+    ClassEntity classEntity = classRepository.findClassById(request.getClass_id());
+    if(classEntity == null){
+      throw new RuntimeException("Invalid class id");
+    }
+
+    if(subject.getClasses().contains(classEntity)){
+      throw new RuntimeException("Class already in subject");
+    }
+
+    classEntity.getSubjects().add(subject);
+    repository.save(subject);
+    return true;
+  }
+
   //PRIVATE FUNCTIONS
-  private UserEntity getValidatedTeacher(String document) {
+  private UserEntity getValidatedTeacher(String document)  {
     UserEntity teacher = userRepository.findTeacherByDocument(document);
     if (teacher == null || !teacher.getRole().equals("teacher")) {
       throw new RuntimeException("Invalid teacher document");
@@ -53,7 +86,6 @@ public class SubjectService {
     subject.setWeek_day(request.getWeek_day());
     subject.setStart_date(getDateFromLocalDate(request.getStart_date()));
     subject.setEnd_date(getDateFromLocalDate(request.getEnd_date()));
-
     return repository.save(subject);
   }
 
