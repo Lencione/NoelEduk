@@ -1,4 +1,4 @@
-package br.com.noeleduk.noelproject.Controllers;
+package br.com.noeleduk.noelproject.Controllers.Auth;
 
 import br.com.noeleduk.noelproject.Dto.Response.ResponseDto;
 import br.com.noeleduk.noelproject.Dto.User.CreateUserDto;

@@ -1,32 +1,30 @@
-package br.com.noeleduk.noelproject.Controllers;
+package br.com.noeleduk.noelproject.Controllers.User;
 
 import br.com.noeleduk.noelproject.Dto.Response.ResponseDto;
-import br.com.noeleduk.noelproject.Dto.User.CreateUserDto;
 import br.com.noeleduk.noelproject.Dto.User.GetUserDto;
-import br.com.noeleduk.noelproject.Services.TeacherService;
+import br.com.noeleduk.noelproject.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/teachers")
-public class TeacherController {
-  private final TeacherService teacherService;
+@RequestMapping("/api/users")
+public class UserController {
+  private final UserService userService;
 
   @Autowired
-  public TeacherController(TeacherService teacherService) {
-    this.teacherService = teacherService;
+  public UserController(UserService userService) {
+    this.userService = userService;
   }
 
   @GetMapping("/getAll")
   public ResponseEntity<ResponseDto> getAllUsers() {
     try {
-      List<GetUserDto> userEntities = teacherService.getAllTeachers();
+      List<GetUserDto> userEntities = userService.getAllUsers();
       return ResponseEntity.ok().body(
-              new ResponseDto("Teachers found", true, userEntities)
+              new ResponseDto("Users found", true, userEntities)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -38,22 +36,9 @@ public class TeacherController {
   @GetMapping("/{email}")
   public ResponseEntity<ResponseDto> getUserByEmail(@PathVariable String email) {
     try {
-      GetUserDto user = teacherService.getTeacherByEmail(email);
+      GetUserDto user = userService.getUserByEmail(email);
       return ResponseEntity.ok().body(
               new ResponseDto("User found", true, user)
-      );
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-              new ResponseDto(e.getMessage(), false, null)
-      );
-    }
-  }
-
-  @PostMapping("/register")
-  public ResponseEntity<ResponseDto> createUser(@RequestBody CreateUserDto createUserDto) {
-    try {
-      return ResponseEntity.ok().body(
-              new ResponseDto("Teacher created with success!", true, teacherService.createTeacher(createUserDto))
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
