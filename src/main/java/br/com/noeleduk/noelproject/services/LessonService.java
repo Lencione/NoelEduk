@@ -1,7 +1,7 @@
 package br.com.noeleduk.noelproject.services;
 
 import br.com.noeleduk.noelproject.dto.lessons.CreateLessonDto;
-import br.com.noeleduk.noelproject.entities.LessonEntity;
+import br.com.noeleduk.noelproject.entities.Lesson;
 import br.com.noeleduk.noelproject.repositories.LessonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ public class LessonService {
   }
 
   public boolean create(CreateLessonDto request){
-    LessonEntity lesson = new LessonEntity();
+    Lesson lesson = new Lesson();
     lesson.setActive(true);
     lesson.setDate(request.getDate());
     lesson.setExam(false);

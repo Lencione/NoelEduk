@@ -3,7 +3,7 @@ package br.com.noeleduk.noelproject.services;
 import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
 import br.com.noeleduk.noelproject.dto.user.LoggedUserDto;
-import br.com.noeleduk.noelproject.entities.UserEntity;
+import br.com.noeleduk.noelproject.entities.User;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TeacherService {
   }
 
   public List<GetUserDto> getAllTeachers() {
-    List<UserEntity> users = repository.findAllTeachers();
+    List<User> users = repository.findAllTeachers();
 
     if (users.isEmpty()) {
       throw new RuntimeException("Teachers not found");
@@ -40,14 +40,14 @@ public class TeacherService {
   }
 
   public GetUserDto getTeacherByEmail(String email) {
-    UserEntity user = repository.findTeacherByEmail(email);
+    User user = repository.findTeacherByEmail(email);
     if (user == null) {
       throw new RuntimeException("Teacher not found");
     }
     return modelMapper.map(user, GetUserDto.class);
   }
   public GetUserDto getTeacherByDocument(String document) {
-    UserEntity user = repository.findTeacherByDocument(document);
+    User user = repository.findTeacherByDocument(document);
     if (user == null) {
       throw new RuntimeException("Teacher not found");
     }
@@ -72,26 +72,26 @@ public class TeacherService {
       throw new RuntimeException("O RG ja esta em uso");
     }
 
-    UserEntity userEntity = new UserEntity();
-    userEntity.setEmail(createUserDTO.getEmail());
-    userEntity.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
-    userEntity.setName(createUserDTO.getName());
-    userEntity.setCpf(createUserDTO.getCpf());
-    userEntity.setRg(createUserDTO.getRg());
-    userEntity.setPhone(createUserDTO.getPhone());
-    userEntity.setRole("teacher");
-    userEntity.setDocument(createUserDTO.getDocument());
-    userEntity.setEdukoins(0);
-    userEntity.setAvatar("");
-    userEntity.setPoints(0);
-    userEntity = repository.save(userEntity);
-    userEntity.setToken(UUID.randomUUID().toString());
-    userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
-    return modelMapper.map(userEntity, LoggedUserDto.class);
+    User user = new User();
+    user.setEmail(createUserDTO.getEmail());
+    user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+    user.setName(createUserDTO.getName());
+    user.setCpf(createUserDTO.getCpf());
+    user.setRg(createUserDTO.getRg());
+    user.setPhone(createUserDTO.getPhone());
+    user.setRole("teacher");
+    user.setDocument(createUserDTO.getDocument());
+    user.setEdukoins(0);
+    user.setAvatar("");
+    user.setPoints(0);
+    user = repository.save(user);
+    user.setToken(UUID.randomUUID().toString());
+    user.setTokenExpiration(LocalDateTime.now().plusDays(7));
+    return modelMapper.map(user, LoggedUserDto.class);
   }
 
   public boolean validateToken(String token) {
-    UserEntity teacher = repository.findTeacherByToken(token);
+    User teacher = repository.findTeacherByToken(token);
     if(teacher != null){
       return !teacher.getTokenExpiration().isBefore(LocalDateTime.now());
     }

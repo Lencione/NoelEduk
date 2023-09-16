@@ -1,12 +1,12 @@
 package br.com.noeleduk.noelproject.repositories;
 
-import br.com.noeleduk.noelproject.entities.LessonEntity;
+import br.com.noeleduk.noelproject.entities.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
+public interface LessonRepository extends JpaRepository<Lesson, UUID> {
 
 }

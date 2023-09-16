@@ -2,7 +2,7 @@ package br.com.noeleduk.noelproject.controllers.teacher;
 
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
-import br.com.noeleduk.noelproject.entities.ClassEntity;
+import br.com.noeleduk.noelproject.entities.Class;
 import br.com.noeleduk.noelproject.services.ClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ClassController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<ResponseDto> createClass(@RequestBody ClassEntity request) {
+  public ResponseEntity<ResponseDto> createClass(@RequestBody Class request) {
     try {
       return ResponseEntity.ok(
               new ResponseDto("Created class successfully", true, classService.createClass(request))
