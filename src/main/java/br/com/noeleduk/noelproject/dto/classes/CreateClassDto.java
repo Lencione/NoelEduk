@@ -2,11 +2,12 @@ package br.com.noeleduk.noelproject.dto.classes;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.UUID;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-public class AddStudentToClassDto {
-  private String document;
+@NoArgsConstructor
+public class CreateClassDto {
+  private String name;
+  private int semester;
 }

@@ -19,10 +19,11 @@ public class AuthController {
   private UserService service;
 
   @PostMapping("/login")
-  public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto user) {
+  public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto login) {
     try {
+
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, service.login(user))
+              new ResponseDto("User found", true, service.login(login))
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

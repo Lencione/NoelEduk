@@ -3,12 +3,15 @@ package br.com.noeleduk.noelproject.services;
 import br.com.noeleduk.noelproject.dto.lessons.CreateLessonDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
+import br.com.noeleduk.noelproject.dto.subjects.GetSubjectDto;
+import br.com.noeleduk.noelproject.dto.user.GetUserDto;
 import br.com.noeleduk.noelproject.entities.ClassEntity;
 import br.com.noeleduk.noelproject.entities.SubjectEntity;
 import br.com.noeleduk.noelproject.entities.UserEntity;
 import br.com.noeleduk.noelproject.repositories.ClassRepository;
 import br.com.noeleduk.noelproject.repositories.SubjectRepository;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,60 +19,43 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class SubjectService {
   private final SubjectRepository repository;
   private final UserRepository userRepository;
   private final LessonService lessonService;
-
   private final ClassRepository classRepository;
+  private final ModelMapper modelMapper;
 
   @Autowired
   public SubjectService(
           SubjectRepository repository,
           UserRepository userRepository,
           LessonService lessonService,
-          ClassRepository classRepository
+          ClassRepository classRepository,
+          ModelMapper modelMapper
   ) {
     this.repository = repository;
     this.userRepository = userRepository;
     this.lessonService = lessonService;
     this.classRepository = classRepository;
+    this.modelMapper = modelMapper;
   }
 
   public boolean create(CreateSubjectDto request) {
     UserEntity teacher = getValidatedTeacher(request.getDocument());
-
     SubjectEntity subject = createSubject(request, teacher);
     generateLessons(subject);
-
     return true;
   }
 
-  @Transactional
-  public boolean addClass(AddClassToSubjectDto request){
-    SubjectEntity subject = repository.findSubjectById(request.getSubject_id());
-    if(subject == null){
-      throw new RuntimeException("Invalid subject id");
-    }
-
-    ClassEntity classEntity = classRepository.findClassById(request.getClass_id());
-    if(classEntity == null){
-      throw new RuntimeException("Invalid class id");
-    }
-
-    if(subject.getClasses().contains(classEntity)){
-      throw new RuntimeException("Class already in subject");
-    }
-
-    classEntity.getSubjects().add(subject);
-    repository.save(subject);
-    return true;
-  }
 
   //PRIVATE FUNCTIONS
-  private UserEntity getValidatedTeacher(String document)  {
+  private UserEntity getValidatedTeacher(String document) {
     UserEntity teacher = userRepository.findTeacherByDocument(document);
     if (teacher == null || !teacher.getRole().equals("teacher")) {
       throw new RuntimeException("Invalid teacher document");
@@ -108,6 +94,4 @@ public class SubjectService {
       nextWeekDay = nextWeekDay.plusDays(7);
     }
   }
-
-
 }

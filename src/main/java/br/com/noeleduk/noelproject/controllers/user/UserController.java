@@ -20,7 +20,7 @@ public class UserController {
     this.service = service;
   }
 
-  @GetMapping("/getAll")
+  @GetMapping("/")
   public ResponseEntity<ResponseDto> getAllUsers() {
     try {
       List<GetUserDto> userEntities = service.getAllUsers();
@@ -28,6 +28,19 @@ public class UserController {
               new ResponseDto("Users found", true, userEntities)
       );
     } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
+  @GetMapping("{document}/lessons")
+  public ResponseEntity<ResponseDto> getStudentLessons(@PathVariable String document){
+    try{
+      List<GetUserLessonsDto> user = service.getStudentLessons(document);
+      return ResponseEntity.ok().body(
+              new ResponseDto("Lessons found", true, user)
+      );
+    }catch (Exception e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
               new ResponseDto(e.getMessage(), false, null)
       );
@@ -41,20 +54,6 @@ public class UserController {
               new ResponseDto("User found", true, user)
       );
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-              new ResponseDto(e.getMessage(), false, null)
-      );
-    }
-  }
-
-  @GetMapping("/lessons/{document}")
-  public ResponseEntity<ResponseDto> getStudentLessons(@PathVariable String document){
-    try{
-      List<GetUserLessonsDto> user = service.getStudentLessons(document);
-      return ResponseEntity.ok().body(
-              new ResponseDto("Lessons found", true, user)
-      );
-    }catch (Exception e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
               new ResponseDto(e.getMessage(), false, null)
       );

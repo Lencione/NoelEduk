@@ -3,6 +3,9 @@ package br.com.noeleduk.noelproject.entities;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,14 +22,21 @@ public class LessonEntity {
     private boolean active = true;
     private String justification;
     private boolean exam = false;
-
+    private String token;
+    private LocalDateTime token_expiration;
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
 
-    @ManyToMany(mappedBy = "lessons")
+    @ManyToMany
+    @JoinTable(
+            name = "users_lessons",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<UserEntity> users;
+
 
 
 }
