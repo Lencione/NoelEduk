@@ -19,7 +19,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("br.com.noeleduk.noelproject.Controllers"))
+                .apis(RequestHandlerSelectors.basePackage("br.com.noeleduk.noelproject.controllers"))
                 .paths(PathSelectors.any())
                 .build().apiInfo(apiInfoMetaData());
     }

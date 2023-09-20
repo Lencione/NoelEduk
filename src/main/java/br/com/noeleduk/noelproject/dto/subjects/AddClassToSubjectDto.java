@@ -8,6 +8,5 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class AddClassToSubjectDto {
-  private UUID subject_id;
   private UUID class_id;
 }

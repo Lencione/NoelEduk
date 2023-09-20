@@ -11,6 +11,9 @@ import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,8 @@ public class UserService {
   private final UserRepository repository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
+
+  private AuthenticationManager authenticationManager;
 
   @Autowired
   public UserService(UserRepository repository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
@@ -51,7 +56,7 @@ public class UserService {
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public List<GetUserLessonsDto> getStudentLessons(String document){
+  public List<GetUserLessonsDto> getStudentLessons(String document) {
     UserEntity user = repository.findStudentByDocument(document);
     if (user == null) {
       throw new RuntimeException("User not found");
@@ -61,7 +66,7 @@ public class UserService {
       throw new RuntimeException("Lessons not found");
     }
 
-    return  lessons.stream().map(lesson -> modelMapper.map(lesson, GetUserLessonsDto.class))
+    return lessons.stream().map(lesson -> modelMapper.map(lesson, GetUserLessonsDto.class))
             .collect(Collectors.toList());
   }
 
@@ -75,6 +80,10 @@ public class UserService {
 
   @NotNull
   private UserEntity createUser(CreateUserDto createUserDTO) {
+
+    //if email has al.unieduk.com.br setRole = student
+
+
     UserEntity userEntity = new UserEntity();
     userEntity.setEmail(createUserDTO.getEmail());
     userEntity.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
@@ -82,7 +91,15 @@ public class UserService {
     userEntity.setCpf(createUserDTO.getCpf());
     userEntity.setRg(createUserDTO.getRg());
     userEntity.setPhone(createUserDTO.getPhone());
-    userEntity.setRole("student");
+
+    if (createUserDTO.getEmail().contains("al.unieduk.com.br")) {
+      userEntity.setRole("student");
+    } else if (createUserDTO.getEmail().contains("prof.unieduk.com.br")) {
+      userEntity.setRole("teacher");
+    } else {
+      throw new RuntimeException("Email invalido (prof.unieduk.com.br ou al.unieduk.com.br)");
+    }
+
     userEntity.setDocument(createUserDTO.getDocument());
     userEntity.setEdukoins(0);
     userEntity.setAvatar("");
@@ -113,6 +130,8 @@ public class UserService {
 
   public LoggedUserDto login(LoginRequestDto user) {
     UserEntity userEntity = repository.findByEmail(user.getEmail());
+    
+
     if (userEntity == null) {
       throw new RuntimeException("User not found");
     }
@@ -128,7 +147,7 @@ public class UserService {
 
   public boolean validateToken(String token) {
     UserEntity user = repository.findByToken(token);
-    if(user != null){
+    if (user != null) {
       return !user.getTokenExpiration().isBefore(LocalDateTime.now());
     }
     return false;

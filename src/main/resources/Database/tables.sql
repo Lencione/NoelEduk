@@ -53,7 +53,6 @@ CREATE TABLE Classes_Subjects (
 );
 
 
-
 CREATE TABLE Lessons (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     date DATE NOT NULL,
@@ -61,7 +60,9 @@ CREATE TABLE Lessons (
     subject_id UUID REFERENCES Subjects(id) NOT NULL,
     active BOOLEAN DEFAULT true,
     justification TEXT NULL,
-    exam BOOLEAN DEFAULT false
+    exam BOOLEAN DEFAULT false,
+    token TEXT NULL,
+    token_expiration TIMESTAMP NULL
 );
 
 CREATE TABLE Users_Lessons (
