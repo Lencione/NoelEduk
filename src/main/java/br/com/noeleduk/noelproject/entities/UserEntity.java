@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
@@ -35,15 +35,15 @@ public class User {
     private int points;
 
     @ManyToMany(mappedBy = "students")
-    private List<Class> classes;
+    private List<ClassEntity> classes;
 
     @ManyToMany
     @JoinTable(name = "users_lessons",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "lesson_id"))
-    private List<Lesson> lessons;
+    private List<LessonEntity> lessons;
 
     @OneToMany(mappedBy = "teacher")
-    private List<Subject> subjects;
+    private List<SubjectEntity> subjects;
 
 }

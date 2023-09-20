@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name="classes")
-public class Class {
+public class ClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -21,11 +21,11 @@ public class Class {
         joinColumns = @JoinColumn(name = "class_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> students;
+    private List<UserEntity> students;
 
     @ManyToMany
     @JoinTable(name = "classes_subjects",
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private List<Subject> subjects;
+    private List<SubjectEntity> subjects;
 }

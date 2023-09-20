@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "user_shop")
-public class UserShop {
+public class UserShopEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,11 +17,11 @@ public class UserShop {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
-    private Product product;
+    private ProductEntity product;
 
     @Column(name = "created_at")
     private Date createdAt;

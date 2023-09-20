@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "Lessons")
-public class Lesson {
+public class LessonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -23,10 +23,10 @@ public class Lesson {
 
     @ManyToOne
     @JoinColumn(name = "subject_id")
-    private Subject subject;
+    private SubjectEntity subject;
 
     @ManyToMany(mappedBy = "lessons")
-    private List<User> users;
+    private List<UserEntity> users;
 
 
 }

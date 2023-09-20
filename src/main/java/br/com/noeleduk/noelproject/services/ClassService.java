@@ -1,8 +1,8 @@
 package br.com.noeleduk.noelproject.services;
 
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
-import br.com.noeleduk.noelproject.entities.Class;
-import br.com.noeleduk.noelproject.entities.User;
+import br.com.noeleduk.noelproject.entities.ClassEntity;
+import br.com.noeleduk.noelproject.entities.UserEntity;
 import br.com.noeleduk.noelproject.repositories.ClassRepository;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +21,19 @@ public class ClassService {
     this.userRepository = userRepository;
   }
 
-  public List<Class> getAllClasses() {
+  public List<ClassEntity> getAllClasses() {
     return repository.findAll();
   }
 
-  public Class createClass(Class aClass) {
-    return repository.save(aClass);
+  public ClassEntity createClass(ClassEntity classEntity) {
+    return repository.save(classEntity);
   }
 
   public boolean addStudentToClass(AddStudentToClassDto dto) {
-    Class aClass = repository.findClassById(dto.getClassId());
-    User user = userRepository.findStudentByDocument(dto.getStudentRa());
+    ClassEntity classEntity = repository.findClassById(dto.getClassId());
+    UserEntity user = userRepository.findStudentByDocument(dto.getStudentRa());
 
-    if (aClass == null) {
+    if (classEntity == null) {
       throw new RuntimeException("Class not found");
     }
 
@@ -41,7 +41,7 @@ public class ClassService {
       throw new RuntimeException("Student not found");
     }
 
-    if (aClass.getStudents().contains(user)) {
+    if (classEntity.getStudents().contains(user)) {
       throw new RuntimeException("Student already in class");
     }
 
@@ -49,8 +49,8 @@ public class ClassService {
       throw new RuntimeException("User is not a student");
     }
 
-    aClass.getStudents().add(user);
-    repository.save(aClass);
+    classEntity.getStudents().add(user);
+    repository.save(classEntity);
     return true;
   }
 }

@@ -3,9 +3,9 @@ package br.com.noeleduk.noelproject.services;
 import br.com.noeleduk.noelproject.dto.lessons.CreateLessonDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
-import br.com.noeleduk.noelproject.entities.Class;
-import br.com.noeleduk.noelproject.entities.Subject;
-import br.com.noeleduk.noelproject.entities.User;
+import br.com.noeleduk.noelproject.entities.ClassEntity;
+import br.com.noeleduk.noelproject.entities.SubjectEntity;
+import br.com.noeleduk.noelproject.entities.UserEntity;
 import br.com.noeleduk.noelproject.repositories.ClassRepository;
 import br.com.noeleduk.noelproject.repositories.SubjectRepository;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
@@ -39,9 +39,9 @@ public class SubjectService {
   }
 
   public boolean create(CreateSubjectDto request) {
-    User teacher = getValidatedTeacher(request.getDocument());
+    UserEntity teacher = getValidatedTeacher(request.getDocument());
 
-    Subject subject = createSubject(request, teacher);
+    SubjectEntity subject = createSubject(request, teacher);
     generateLessons(subject);
 
     return true;
@@ -49,36 +49,36 @@ public class SubjectService {
 
   @Transactional
   public boolean addClass(AddClassToSubjectDto request){
-    Subject subject = repository.findSubjectById(request.getSubject_id());
+    SubjectEntity subject = repository.findSubjectById(request.getSubject_id());
     if(subject == null){
       throw new RuntimeException("Invalid subject id");
     }
 
-    Class aClass = classRepository.findClassById(request.getClass_id());
-    if(aClass == null){
+    ClassEntity classEntity = classRepository.findClassById(request.getClass_id());
+    if(classEntity == null){
       throw new RuntimeException("Invalid class id");
     }
 
-    if(subject.getClasses().contains(aClass)){
+    if(subject.getClasses().contains(classEntity)){
       throw new RuntimeException("Class already in subject");
     }
 
-    aClass.getSubjects().add(subject);
+    classEntity.getSubjects().add(subject);
     repository.save(subject);
     return true;
   }
 
   //PRIVATE FUNCTIONS
-  private User getValidatedTeacher(String document)  {
-    User teacher = userRepository.findTeacherByDocument(document);
+  private UserEntity getValidatedTeacher(String document)  {
+    UserEntity teacher = userRepository.findTeacherByDocument(document);
     if (teacher == null || !teacher.getRole().equals("teacher")) {
       throw new RuntimeException("Invalid teacher document");
     }
     return teacher;
   }
 
-  private Subject createSubject(CreateSubjectDto request, User teacher) {
-    Subject subject = new Subject();
+  private SubjectEntity createSubject(CreateSubjectDto request, UserEntity teacher) {
+    SubjectEntity subject = new SubjectEntity();
     subject.setName(request.getName());
     subject.setTeacher(teacher);
     subject.setGoogleCode(request.getGoogle_code());
@@ -92,7 +92,7 @@ public class SubjectService {
     return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  private void generateLessons(Subject subject) {
+  private void generateLessons(SubjectEntity subject) {
     LocalDate initialDate = subject.getStart_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay().toLocalDate();
     int currentWeekDay = initialDate.getDayOfWeek().getValue();
     int daysUntilNextWeekDay = (subject.getWeek_day() - currentWeekDay + 7) % 7;

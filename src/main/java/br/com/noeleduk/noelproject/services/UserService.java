@@ -5,8 +5,8 @@ import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
 import br.com.noeleduk.noelproject.dto.user.LoggedUserDto;
 import br.com.noeleduk.noelproject.dto.user.LoginRequestDto;
-import br.com.noeleduk.noelproject.entities.Lesson;
-import br.com.noeleduk.noelproject.entities.User;
+import br.com.noeleduk.noelproject.entities.LessonEntity;
+import br.com.noeleduk.noelproject.entities.UserEntity;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
@@ -33,7 +33,7 @@ public class UserService {
   }
 
   public List<GetUserDto> getAllUsers() {
-    List<User> users = repository.findAllStudents();
+    List<UserEntity> users = repository.findAllStudents();
 
     if (users.isEmpty()) {
       throw new RuntimeException("Users not found");
@@ -44,7 +44,7 @@ public class UserService {
   }
 
   public GetUserDto getUserByEmail(String email) {
-    User user = repository.findByEmail(email);
+    UserEntity user = repository.findByEmail(email);
     if (user == null) {
       throw new RuntimeException("User not found");
     }
@@ -52,11 +52,11 @@ public class UserService {
   }
 
   public List<GetUserLessonsDto> getStudentLessons(String document){
-    User user = repository.findStudentByDocument(document);
+    UserEntity user = repository.findStudentByDocument(document);
     if (user == null) {
       throw new RuntimeException("User not found");
     }
-    List<Lesson> lessons = repository.getLessonsByUser(user);
+    List<LessonEntity> lessons = repository.getLessonsByUser(user);
     if (lessons.isEmpty()) {
       throw new RuntimeException("Lessons not found");
     }
@@ -69,28 +69,28 @@ public class UserService {
 
     validateUser(createUserDTO);
 
-    User user = createUser(createUserDTO);
-    return modelMapper.map(user, LoggedUserDto.class);
+    UserEntity userEntity = createUser(createUserDTO);
+    return modelMapper.map(userEntity, LoggedUserDto.class);
   }
 
   @NotNull
-  private User createUser(CreateUserDto createUserDTO) {
-    User user = new User();
-    user.setEmail(createUserDTO.getEmail());
-    user.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
-    user.setName(createUserDTO.getName());
-    user.setCpf(createUserDTO.getCpf());
-    user.setRg(createUserDTO.getRg());
-    user.setPhone(createUserDTO.getPhone());
-    user.setRole("student");
-    user.setDocument(createUserDTO.getDocument());
-    user.setEdukoins(0);
-    user.setAvatar("");
-    user.setPoints(0);
-    user.setToken(UUID.randomUUID().toString());
-    user.setTokenExpiration(LocalDateTime.now().plusDays(7));
-    user = repository.save(user);
-    return user;
+  private UserEntity createUser(CreateUserDto createUserDTO) {
+    UserEntity userEntity = new UserEntity();
+    userEntity.setEmail(createUserDTO.getEmail());
+    userEntity.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
+    userEntity.setName(createUserDTO.getName());
+    userEntity.setCpf(createUserDTO.getCpf());
+    userEntity.setRg(createUserDTO.getRg());
+    userEntity.setPhone(createUserDTO.getPhone());
+    userEntity.setRole("student");
+    userEntity.setDocument(createUserDTO.getDocument());
+    userEntity.setEdukoins(0);
+    userEntity.setAvatar("");
+    userEntity.setPoints(0);
+    userEntity.setToken(UUID.randomUUID().toString());
+    userEntity.setTokenExpiration(LocalDateTime.now().plusDays(7));
+    userEntity = repository.save(userEntity);
+    return userEntity;
   }
 
   private void validateUser(CreateUserDto createUserDTO) {
@@ -112,7 +112,7 @@ public class UserService {
   }
 
   public LoggedUserDto login(LoginRequestDto user) {
-    User userEntity = repository.findByEmail(user.getEmail());
+    UserEntity userEntity = repository.findByEmail(user.getEmail());
     if (userEntity == null) {
       throw new RuntimeException("User not found");
     }
@@ -127,7 +127,7 @@ public class UserService {
   }
 
   public boolean validateToken(String token) {
-    User user = repository.findByToken(token);
+    UserEntity user = repository.findByToken(token);
     if(user != null){
       return !user.getTokenExpiration().isBefore(LocalDateTime.now());
     }
