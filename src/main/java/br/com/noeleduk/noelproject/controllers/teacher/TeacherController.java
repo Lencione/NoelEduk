@@ -195,6 +195,20 @@ public class TeacherController {
     }
   }
 
+  @GetMapping("/{document}")
+  public ResponseEntity<ResponseDto> getUserByDocument(@PathVariable String document) {
+    try {
+      GetUserDto user = service.getTeacherByDocument(document);
+      return ResponseEntity.ok().body(
+              new ResponseDto("User found", true, user)
+      );
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
+
   //endregion
 
 
