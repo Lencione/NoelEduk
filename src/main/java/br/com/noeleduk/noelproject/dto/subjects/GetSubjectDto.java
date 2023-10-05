@@ -15,4 +15,6 @@ public class GetSubjectDto {
   String description;
   String teacherName;
   String teacherDocument;
+  String googleCode;
+  int week_day;
 }

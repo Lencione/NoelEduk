@@ -9,4 +9,5 @@ public class LoggedUserDto {
   private String token;
   private LocalDateTime tokenExpiration;
   private String role;
+  private String document;
 }

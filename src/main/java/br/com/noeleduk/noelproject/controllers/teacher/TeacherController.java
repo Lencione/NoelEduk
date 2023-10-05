@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/teachers")
+@CrossOrigin(origins = "*")
 public class TeacherController {
   private final TeacherService service;
 
@@ -184,6 +185,20 @@ public class TeacherController {
   public ResponseEntity<ResponseDto> getUserByEmail(@PathVariable String email) {
     try {
       GetUserDto user = service.getTeacherByEmail(email);
+      return ResponseEntity.ok().body(
+              new ResponseDto("User found", true, user)
+      );
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
+
+  @GetMapping("/{document}")
+  public ResponseEntity<ResponseDto> getUserByDocument(@PathVariable String document) {
+    try {
+      GetUserDto user = service.getTeacherByDocument(document);
       return ResponseEntity.ok().body(
               new ResponseDto("User found", true, user)
       );
