@@ -5,15 +5,27 @@ import br.com.noeleduk.noelproject.interceptors.TokenInterceptor;
 import br.com.noeleduk.noelproject.services.TeacherService;
 import br.com.noeleduk.noelproject.services.UserService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
-public class WebMvcConfig implements WebMvcConfigurer {
+public class WebMvcConfig implements WebMvcConfigurer{
 private final UserService userService;
 private final TeacherService teacherService;
   public WebMvcConfig(UserService userService, TeacherService teacherService) {
     this.userService = userService;
     this.teacherService = teacherService;
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/**")
+            .allowedOrigins("*")
+            .allowedMethods("*")
+            .allowedHeaders("*")
+            .exposedHeaders("*")
+            .allowCredentials(true)
+            .maxAge(3600);
   }
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
