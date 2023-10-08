@@ -20,7 +20,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/teachers")
-@CrossOrigin(origins = "*")
 public class TeacherController {
   private final TeacherService service;
 
