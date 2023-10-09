@@ -3,6 +3,7 @@ package br.com.noeleduk.noelproject.controllers.user;
 import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
+import br.com.noeleduk.noelproject.dto.user.MarkUserPresenceDto;
 import br.com.noeleduk.noelproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,20 @@ public class UserController {
       GetUserDto user = service.getUserByEmail(email);
       return ResponseEntity.ok().body(
               new ResponseDto("User found", true, user)
+      );
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
+
+  @PostMapping("{user}/markPresence")
+  public ResponseEntity<ResponseDto> markPresence(@PathVariable String user, @RequestBody MarkUserPresenceDto presence) {
+    try {
+      service.markPresence(user,presence);
+      return ResponseEntity.ok().body(
+              new ResponseDto("Presence marked", true, "Success")
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

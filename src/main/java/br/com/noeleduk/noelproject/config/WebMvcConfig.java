@@ -5,10 +5,12 @@ import br.com.noeleduk.noelproject.interceptors.TokenInterceptor;
 import br.com.noeleduk.noelproject.services.TeacherService;
 import br.com.noeleduk.noelproject.services.UserService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
+@EnableWebSecurity
 public class WebMvcConfig implements WebMvcConfigurer{
 private final UserService userService;
 private final TeacherService teacherService;
@@ -24,7 +26,7 @@ private final TeacherService teacherService;
             .allowedMethods("*")
             .allowedHeaders("*")
             .exposedHeaders("*")
-            .allowCredentials(true)
+            .allowCredentials(false)
             .maxAge(3600);
   }
   @Override

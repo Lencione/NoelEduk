@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface LessonRepository extends JpaRepository<LessonEntity, UUID> {
 
   LessonEntity findLessonById(UUID id);
+
+  LessonEntity findLessonByToken(String token);
 }

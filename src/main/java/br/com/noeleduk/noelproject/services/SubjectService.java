@@ -46,22 +46,12 @@ public class SubjectService {
     this.modelMapper = modelMapper;
   }
 
-  public boolean create(CreateSubjectDto request) {
-    UserEntity teacher = getValidatedTeacher(request.getDocument());
+  public SubjectEntity create(UserEntity teacher, CreateSubjectDto request) {
     SubjectEntity subject = createSubject(request, teacher);
     generateLessons(subject);
-    return true;
+    return subject;
   }
 
-
-  //PRIVATE FUNCTIONS
-  private UserEntity getValidatedTeacher(String document) {
-    UserEntity teacher = userRepository.findTeacherByDocument(document);
-    if (teacher == null || !teacher.getRole().equals("teacher")) {
-      throw new RuntimeException("Invalid teacher document");
-    }
-    return teacher;
-  }
 
   private SubjectEntity createSubject(CreateSubjectDto request, UserEntity teacher) {
     SubjectEntity subject = new SubjectEntity();
