@@ -1,19 +1,17 @@
 package br.com.noeleduk.noelproject.services;
 
 import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
-import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
-import br.com.noeleduk.noelproject.dto.user.GetUserDto;
-import br.com.noeleduk.noelproject.dto.user.LoggedUserDto;
-import br.com.noeleduk.noelproject.dto.user.LoginRequestDto;
+import br.com.noeleduk.noelproject.dto.user.*;
 import br.com.noeleduk.noelproject.entities.LessonEntity;
 import br.com.noeleduk.noelproject.entities.UserEntity;
+import br.com.noeleduk.noelproject.entities.UserLessonEntity;
+import br.com.noeleduk.noelproject.repositories.LessonRepository;
+import br.com.noeleduk.noelproject.repositories.UserLessonRepository;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +23,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
   private final UserRepository repository;
+  private final LessonRepository  lessonRepository;
+  private final UserLessonRepository userLessonRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
 
   private AuthenticationManager authenticationManager;
 
   @Autowired
-  public UserService(UserRepository repository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+  public UserService(UserRepository repository, LessonRepository lessonRepository, UserLessonRepository userLessonRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
     this.repository = repository;
+    this.lessonRepository = lessonRepository;
+    this.userLessonRepository = userLessonRepository;
     this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
   }
@@ -154,4 +156,30 @@ public class UserService {
   }
 
 
+  public void markPresence(String userDocument, MarkUserPresenceDto presence) {
+    UserEntity user = repository.findStudentByDocument(userDocument);
+    LessonEntity lesson = lessonRepository.findLessonByToken(presence.getLessonToken());
+
+    if (user == null) {
+      throw new RuntimeException("User not found");
+    }
+
+    if (lesson == null) {
+      throw new RuntimeException("Invalid lesson token");
+    }
+
+    if(lesson.getToken_expiration().isBefore(LocalDateTime.now())){
+      throw new RuntimeException("Lesson token expired");
+    }
+
+    if (repository.findUsersLessonToday(user.getId(), lesson.getId()).contains(user)) {
+      throw new RuntimeException("User lesson already exists");
+    }
+
+    UserLessonEntity userLesson = new UserLessonEntity();
+    userLesson.setLesson(lesson);
+    userLesson.setUser(user);
+    userLesson.setCreatedAt(LocalDateTime.now());
+    userLessonRepository.save(userLesson);
+  }
 }

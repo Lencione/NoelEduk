@@ -29,13 +29,8 @@ public class LessonEntity {
     @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_lessons",
-            joinColumns = @JoinColumn(name = "lesson_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<UserEntity> users;
+    @OneToMany(mappedBy = "lesson")
+    private List<UserLessonEntity> studentsWithPresence;
 
 
 
