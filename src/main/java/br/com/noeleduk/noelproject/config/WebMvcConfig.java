@@ -18,17 +18,6 @@ private final TeacherService teacherService;
     this.userService = userService;
     this.teacherService = teacherService;
   }
-
-  @Override
-  public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**")
-            .allowedOrigins("*")
-            .allowedMethods("*")
-            .allowedHeaders("*")
-            .exposedHeaders("*")
-            .allowCredentials(false)
-            .maxAge(3600);
-  }
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
     registry.addInterceptor(new TokenInterceptor(this.userService))

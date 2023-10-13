@@ -190,4 +190,12 @@ public class UserService {
     }
     return modelMapper.map(student, GetStudentCardDto.class);
   }
+
+//  public List<MarkUserPresenceDto> getUserPresences(String user) {
+//    UserEntity student = repository.findStudentByDocument(user);
+//    if (student == null) {
+//      throw new RuntimeException("Invalid student document");
+//    }
+//
+//  }
 }
