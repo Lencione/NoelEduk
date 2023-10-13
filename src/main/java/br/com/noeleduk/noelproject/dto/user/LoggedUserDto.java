@@ -10,4 +10,5 @@ public class LoggedUserDto {
   private LocalDateTime tokenExpiration;
   private String role;
   private String document;
+  private String course;
 }

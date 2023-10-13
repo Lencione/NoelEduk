@@ -12,4 +12,5 @@ public class CreateUserDto {
     private String phone;
     private String document;
     private String avatar;
+    private String course;
 }

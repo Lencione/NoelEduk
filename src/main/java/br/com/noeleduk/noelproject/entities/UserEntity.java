@@ -29,6 +29,7 @@ public class UserEntity {
     private String phone;
     private String role;
     private String document;
+    private String course;
     private int edukoins;
     private String avatar;
     private int points;

@@ -182,4 +182,12 @@ public class UserService {
     userLesson.setCreatedAt(LocalDateTime.now());
     userLessonRepository.save(userLesson);
   }
+
+  public GetStudentCardDto getStudentCard(String user) {
+    UserEntity student = repository.findStudentByDocument(user);
+    if (student == null) {
+      throw new RuntimeException("Invalid student document");
+    }
+    return modelMapper.map(student, GetStudentCardDto.class);
+  }
 }

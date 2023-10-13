@@ -10,4 +10,5 @@ public class GetUserDto {
     private String edukoins;
     private String avatar;
     private String points;
+    private String course;
 }
