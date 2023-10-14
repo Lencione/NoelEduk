@@ -2,8 +2,9 @@ FROM openjdk:11
 
 WORKDIR /var/www/noel
 
-COPY target/NoelProject-0.0.1-SNAPSHOT.jar /var/www/noel/spring-noel.jar
+RUN apt update && apt install maven -y && mvn -v
 
+COPY target/NoelProject-0.0.1-SNAPSHOT.jar /var/www/noel/spring-noel.jar
 
 RUN groupadd -g 1000 www
 RUN useradd -u 1000 -ms /bin/bash -g www www

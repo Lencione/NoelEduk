@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetUserPresenceDto {
-  private String subject;
-  private int presences;
-  private int fouls;
-  private int total;
+  private String subjectName;
+  private Long presences;
+  private Long fouls;
+  private Long total;
 }

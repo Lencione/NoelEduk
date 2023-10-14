@@ -23,20 +23,22 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
   private final UserRepository repository;
-  private final LessonRepository  lessonRepository;
+  private final LessonRepository lessonRepository;
   private final UserLessonRepository userLessonRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
+  private final SubjectService  subjectService;
 
   private AuthenticationManager authenticationManager;
 
   @Autowired
-  public UserService(UserRepository repository, LessonRepository lessonRepository, UserLessonRepository userLessonRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+  public UserService(UserRepository repository, LessonRepository lessonRepository, UserLessonRepository userLessonRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, SubjectService subjectService) {
     this.repository = repository;
     this.lessonRepository = lessonRepository;
     this.userLessonRepository = userLessonRepository;
     this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
+    this.subjectService = subjectService;
   }
 
   public List<GetUserDto> getAllUsers() {
@@ -82,10 +84,6 @@ public class UserService {
 
   @NotNull
   private UserEntity createUser(CreateUserDto createUserDTO) {
-
-    //if email has al.unieduk.com.br setRole = student
-
-
     UserEntity userEntity = new UserEntity();
     userEntity.setEmail(createUserDTO.getEmail());
     userEntity.setPassword(passwordEncoder.encode(createUserDTO.getPassword()));
@@ -132,7 +130,7 @@ public class UserService {
 
   public LoggedUserDto login(LoginRequestDto user) {
     UserEntity userEntity = repository.findByEmail(user.getEmail());
-    
+
 
     if (userEntity == null) {
       throw new RuntimeException("User not found");
@@ -168,7 +166,7 @@ public class UserService {
       throw new RuntimeException("Invalid lesson token");
     }
 
-    if(lesson.getToken_expiration().isBefore(LocalDateTime.now())){
+    if (lesson.getToken_expiration().isBefore(LocalDateTime.now())) {
       throw new RuntimeException("Lesson token expired");
     }
 
@@ -191,11 +189,17 @@ public class UserService {
     return modelMapper.map(student, GetStudentCardDto.class);
   }
 
-//  public List<MarkUserPresenceDto> getUserPresences(String user) {
-//    UserEntity student = repository.findStudentByDocument(user);
-//    if (student == null) {
-//      throw new RuntimeException("Invalid student document");
-//    }
-//
-//  }
+  public List<GetUserPresenceDto> getUserPresences(String user) {
+    UserEntity student = repository.findStudentByDocument(user);
+    if (student == null) {
+      throw new RuntimeException("Invalid student document");
+    }
+
+    List<GetUserPresenceDto> subjects = subjectService.getSubjectsByStudent(student);
+    if (subjects.isEmpty()) {
+      throw new RuntimeException("No subjects found");
+    }
+
+    return subjects;
+  }
 }

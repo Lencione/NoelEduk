@@ -11,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class GetUserLessonsDto {
   private Date date;
+  private String subjectName;
   private String description;
   private String justification;
   private boolean exam;

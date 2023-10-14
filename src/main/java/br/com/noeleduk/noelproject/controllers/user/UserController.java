@@ -4,6 +4,7 @@ import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.user.GetStudentCardDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
+import br.com.noeleduk.noelproject.dto.user.GetUserPresenceDto;
 import br.com.noeleduk.noelproject.dto.user.MarkUserPresenceDto;
 import br.com.noeleduk.noelproject.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,17 +91,17 @@ public class UserController {
     }
   }
 
-//  @GetMapping("/{user}/presences")
-//  public ResponseEntity<ResponseDto> getUserPresences(@PathVariable String user) {
-//    try {
-//      List<MarkUserPresenceDto> presences = service.getUserPresences(user);
-//      return ResponseEntity.ok().body(
-//              new ResponseDto("Presences found", true, presences)
-//      );
-//    } catch (Exception e) {
-//      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-//              new ResponseDto(e.getMessage(), false, null)
-//      );
-//    }
-//  }
+  @GetMapping("/{user}/presences")
+  public ResponseEntity<ResponseDto> getUserPresences(@PathVariable String user) {
+    try {
+      List<GetUserPresenceDto> presences = service.getUserPresences(user);
+      return ResponseEntity.ok().body(
+              new ResponseDto("Presences found", true, presences)
+      );
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
 }
