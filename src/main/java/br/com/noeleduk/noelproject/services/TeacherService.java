@@ -20,6 +20,7 @@ import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.*;
@@ -32,7 +33,8 @@ public class TeacherService {
   private final SubjectRepository subjectRepository;
   private final ClassRepository classRepository;
   private final LessonRepository lessonRepository;
-  private final SubjectService  subjectService;
+  private final SubjectService subjectService;
+
   @Autowired
   public TeacherService(
           UserRepository repository,
@@ -123,7 +125,7 @@ public class TeacherService {
       throw new RuntimeException("Subject not found");
     }
 
-    if(subject.getTeacher() != teacher) {
+    if (subject.getTeacher() != teacher) {
       throw new RuntimeException("Subject does not belong to teacher");
     }
 
@@ -148,7 +150,7 @@ public class TeacherService {
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher document");
     }
-    SubjectEntity subject = subjectService.create(teacher,request);
+    SubjectEntity subject = subjectService.create(teacher, request);
     return modelMapper.map(subject, GetSubjectDto.class);
   }
 
@@ -215,20 +217,30 @@ public class TeacherService {
       throw new RuntimeException("Invalid class id");
     }
 
-    UserEntity student = repository.findStudentByDocument(request.getDocument());
-    if (student == null) {
-      throw new RuntimeException("Invalid student document");
+    List<String> documents = request.getDocuments();
+    if (documents.isEmpty()) {
+      throw new RuntimeException("Empty document list");
     }
 
-    if (classEntity.getStudents().contains(student)) {
-      throw new RuntimeException("Student already in class");
-    }
+    //for each document in the list, check if the student exists and if the student is not already in the class
+    documents.forEach(studentDocument -> {
+      UserEntity student = repository.findStudentByDocument(studentDocument);
+      if (student == null) {
+        throw new RuntimeException("Invalid student document");
+      }
 
-    classEntity.getStudents().add(student);
+      if (classEntity.getStudents().contains(student)) {
+        throw new RuntimeException("Student already in class");
+      }
+
+      classEntity.getStudents().add(student);
+    });
+
     classRepository.save(classEntity);
     return "Student added to class with success";
   }
 
+  // Now accept a list of documents and add them to the class
   public Object getStudentsByClassId(String document, UUID id) {
     UserEntity teacher = repository.findTeacherByDocument(document);
 
@@ -244,6 +256,7 @@ public class TeacherService {
     return classEntity.getStudents().stream().map(student -> modelMapper.map(student, GetUserDto.class)).collect(Collectors.toList());
   }
 
+
   public String createLessonToken(String document, UUID id) {
     UserEntity teacher = repository.findTeacherByDocument(document);
 
@@ -256,7 +269,7 @@ public class TeacherService {
       throw new RuntimeException("Invalid lesson id");
     }
 
-    if(lesson.getSubject().getTeacher().getId() != teacher.getId()){
+    if (lesson.getSubject().getTeacher().getId() != teacher.getId()) {
       throw new RuntimeException("This lesson does not belong to this teacher");
     }
 
