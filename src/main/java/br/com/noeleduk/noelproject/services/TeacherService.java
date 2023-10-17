@@ -3,6 +3,7 @@ package br.com.noeleduk.noelproject.services;
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
 import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
 import br.com.noeleduk.noelproject.dto.classes.GetClassDto;
+import br.com.noeleduk.noelproject.dto.lessons.GetFormattedLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetLessonDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
@@ -12,43 +13,34 @@ import br.com.noeleduk.noelproject.entities.ClassEntity;
 import br.com.noeleduk.noelproject.entities.LessonEntity;
 import br.com.noeleduk.noelproject.entities.SubjectEntity;
 import br.com.noeleduk.noelproject.entities.UserEntity;
-import br.com.noeleduk.noelproject.helpers.Utils;
 import br.com.noeleduk.noelproject.repositories.ClassRepository;
 import br.com.noeleduk.noelproject.repositories.LessonRepository;
 import br.com.noeleduk.noelproject.repositories.SubjectRepository;
 import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TeacherService {
   private final UserRepository repository;
-  private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
   private final SubjectRepository subjectRepository;
-
   private final ClassRepository classRepository;
   private final LessonRepository lessonRepository;
   private final SubjectService  subjectService;
-
-
   @Autowired
   public TeacherService(
           UserRepository repository,
-          PasswordEncoder passwordEncoder,
           ModelMapper modelMapper,
           SubjectRepository subjectRepository,
           ClassRepository classRepository,
           LessonRepository lessonRepository, SubjectService subjectService) {
     this.repository = repository;
-    this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
     this.subjectRepository = subjectRepository;
     this.classRepository = classRepository;
@@ -91,14 +83,31 @@ public class TeacherService {
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public List<GetLessonDto> getLessonsByTeacherDocument(String document) {
+  public List<GetFormattedLessonsDto<GetLessonDto>> getLessonsByTeacherDocument(String document) {
     UserEntity teacher = repository.findTeacherByDocument(document);
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher email");
     }
-    return teacher.getSubjects().stream()
+
+    Map<Integer, List<GetLessonDto>> lessonsByWeek = teacher.getSubjects().stream()
             .flatMap(subject -> subject.getLessons().stream())
-            .map(lesson -> modelMapper.map(lesson, GetLessonDto.class))
+            .map(lesson -> {
+              GetLessonDto lessonDto = modelMapper.map(lesson, GetLessonDto.class);
+              WeekFields weekFields = WeekFields.of(Locale.getDefault());
+              int weekNumber = lessonDto.getDate().get(weekFields.weekOfWeekBasedYear());
+              lessonDto.setWeekOfYear(weekNumber);
+              return lessonDto;
+            })
+            .sorted(Comparator.comparing(GetLessonDto::getDate))
+            .collect(Collectors.groupingBy(GetLessonDto::getWeekOfYear));
+
+    return lessonsByWeek.entrySet().stream()
+            .map(entry -> {
+              GetFormattedLessonsDto<GetLessonDto> weekLessonsDto = new GetFormattedLessonsDto<GetLessonDto>();
+              weekLessonsDto.setWeek(entry.getKey());
+              weekLessonsDto.setWeekLessons(entry.getValue());
+              return weekLessonsDto;
+            })
             .collect(Collectors.toList());
   }
 

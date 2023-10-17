@@ -8,7 +8,6 @@ import br.com.noeleduk.noelproject.entities.UserEntity;
 import br.com.noeleduk.noelproject.repositories.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -60,7 +59,7 @@ public class SubjectService {
 
     while (nextWeekDay.isBefore(endDate) || nextWeekDay.isEqual(endDate)) {
       CreateLessonDto lesson = new CreateLessonDto(
-              Date.from(nextWeekDay.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+              LocalDate.from(nextWeekDay.atStartOfDay(ZoneId.systemDefault()).toInstant()),
               subject
       );
       lessonService.create(lesson);
