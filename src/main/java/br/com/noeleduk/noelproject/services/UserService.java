@@ -1,5 +1,6 @@
 package br.com.noeleduk.noelproject.services;
 
+import br.com.noeleduk.noelproject.dto.lessons.GetFormattedLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
 import br.com.noeleduk.noelproject.dto.user.*;
 import br.com.noeleduk.noelproject.entities.LessonEntity;
@@ -11,13 +12,11 @@ import br.com.noeleduk.noelproject.repositories.UserRepository;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,9 +26,7 @@ public class UserService {
   private final UserLessonRepository userLessonRepository;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
-  private final SubjectService  subjectService;
-
-  private AuthenticationManager authenticationManager;
+  private final SubjectService subjectService;
 
   @Autowired
   public UserService(UserRepository repository, LessonRepository lessonRepository, UserLessonRepository userLessonRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, SubjectService subjectService) {
@@ -60,7 +57,7 @@ public class UserService {
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public List<GetUserLessonsDto> getStudentLessons(String document) {
+  public List<GetFormattedLessonsDto<GetUserLessonsDto>> getStudentLessons(String document) {
     UserEntity user = repository.findStudentByDocument(document);
     if (user == null) {
       throw new RuntimeException("User not found");
@@ -70,7 +67,24 @@ public class UserService {
       throw new RuntimeException("Lessons not found");
     }
 
-    return lessons.stream().map(lesson -> modelMapper.map(lesson, GetUserLessonsDto.class))
+    Map<Integer, List<GetUserLessonsDto>> lessonsByWeek = lessons.stream()
+            .map(lesson -> {
+              GetUserLessonsDto dto = modelMapper.map(lesson, GetUserLessonsDto.class);
+              WeekFields weekFields = WeekFields.of(Locale.getDefault());
+              int weekNumber = dto.getDate().get(weekFields.weekOfWeekBasedYear());
+              dto.setWeekOfYear(weekNumber);
+              return dto;
+            })
+            .sorted(Comparator.comparing(GetUserLessonsDto::getDate))
+            .collect(Collectors.groupingBy(GetUserLessonsDto::getWeekOfYear));
+
+    return lessonsByWeek.entrySet().stream()
+            .map(entry -> {
+              GetFormattedLessonsDto<GetUserLessonsDto> weekLessonsDto = new GetFormattedLessonsDto<>();
+              weekLessonsDto.setWeek(entry.getKey());
+              weekLessonsDto.setWeekLessons(entry.getValue());
+              return weekLessonsDto;
+            })
             .collect(Collectors.toList());
   }
 

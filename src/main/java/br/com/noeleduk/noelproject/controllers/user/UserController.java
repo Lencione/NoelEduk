@@ -1,6 +1,5 @@
 package br.com.noeleduk.noelproject.controllers.user;
 
-import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.user.GetStudentCardDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
@@ -39,9 +38,8 @@ public class UserController {
   @GetMapping("{document}/lessons")
   public ResponseEntity<ResponseDto> getStudentLessons(@PathVariable String document){
     try{
-      List<GetUserLessonsDto> user = service.getStudentLessons(document);
       return ResponseEntity.ok().body(
-              new ResponseDto("Lessons found", true, user)
+              new ResponseDto("Lessons found", true, service.getStudentLessons(document))
       );
     }catch (Exception e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

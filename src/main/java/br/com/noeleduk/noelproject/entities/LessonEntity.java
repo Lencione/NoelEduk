@@ -1,12 +1,9 @@
 package br.com.noeleduk.noelproject.entities;
 
 import lombok.Data;
-
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +14,7 @@ public class LessonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    private Date date;
+    private LocalDate date;
     private String description;
     private boolean active = true;
     private String justification;
@@ -31,7 +28,4 @@ public class LessonEntity {
 
     @OneToMany(mappedBy = "lesson")
     private List<UserLessonEntity> studentsWithPresence;
-
-
-
 }
