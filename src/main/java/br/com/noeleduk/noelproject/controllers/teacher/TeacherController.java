@@ -2,6 +2,7 @@ package br.com.noeleduk.noelproject.controllers.teacher;
 
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
 import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
+import br.com.noeleduk.noelproject.dto.lessons.MarkLessonStudentPresenceDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
@@ -161,6 +162,19 @@ public class TeacherController {
       );
     }
   }
+
+  @PostMapping("{document}/lessons/{id}/markPresences")
+  public ResponseEntity<ResponseDto> markPresences(@PathVariable String document, @PathVariable UUID id, @RequestBody MarkLessonStudentPresenceDto request) {
+    try {
+      return ResponseEntity.ok(
+              new ResponseDto("Presences marked successfully", true, service.markPresenceToStudent(document, id, request))
+      );
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
   //endregion
 
   //region Teachers
@@ -205,6 +219,7 @@ public class TeacherController {
       );
     }
   }
+
 
   //endregion
 

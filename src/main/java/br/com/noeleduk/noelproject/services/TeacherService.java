@@ -5,18 +5,13 @@ import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
 import br.com.noeleduk.noelproject.dto.classes.GetClassDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetFormattedLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetLessonDto;
+import br.com.noeleduk.noelproject.dto.lessons.MarkLessonStudentPresenceDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.GetSubjectDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
-import br.com.noeleduk.noelproject.entities.ClassEntity;
-import br.com.noeleduk.noelproject.entities.LessonEntity;
-import br.com.noeleduk.noelproject.entities.SubjectEntity;
-import br.com.noeleduk.noelproject.entities.UserEntity;
-import br.com.noeleduk.noelproject.repositories.ClassRepository;
-import br.com.noeleduk.noelproject.repositories.LessonRepository;
-import br.com.noeleduk.noelproject.repositories.SubjectRepository;
-import br.com.noeleduk.noelproject.repositories.UserRepository;
+import br.com.noeleduk.noelproject.entities.*;
+import br.com.noeleduk.noelproject.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +29,7 @@ public class TeacherService {
   private final ClassRepository classRepository;
   private final LessonRepository lessonRepository;
   private final SubjectService subjectService;
+  private final UserLessonRepository userLessonRepository;
 
   @Autowired
   public TeacherService(
@@ -41,13 +37,14 @@ public class TeacherService {
           ModelMapper modelMapper,
           SubjectRepository subjectRepository,
           ClassRepository classRepository,
-          LessonRepository lessonRepository, SubjectService subjectService) {
+          LessonRepository lessonRepository, SubjectService subjectService, UserLessonRepository userLessonRepository) {
     this.repository = repository;
     this.modelMapper = modelMapper;
     this.subjectRepository = subjectRepository;
     this.classRepository = classRepository;
     this.lessonRepository = lessonRepository;
     this.subjectService = subjectService;
+    this.userLessonRepository = userLessonRepository;
   }
 
   public List<GetUserDto> getAllTeachers() {
@@ -155,8 +152,10 @@ public class TeacherService {
   }
 
 
-  public String addClassToSubject(String document, UUID id, AddClassToSubjectDto request) {
+  public List<String> addClassToSubject(String document, UUID id, AddClassToSubjectDto request) {
     UserEntity teacher = repository.findTeacherByDocument(document);
+    List<String> response = new ArrayList<>();
+
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher document");
     }
@@ -169,18 +168,21 @@ public class TeacherService {
       throw new RuntimeException("This subject does not belong to this teacher");
     }
 
-    ClassEntity classEntity = classRepository.findClassById(request.getClass_id());
-    if (classEntity == null) {
-      throw new RuntimeException("Invalid class id");
-    }
-
-    if (classEntity.getSubjects().contains(subject)) {
-      throw new RuntimeException("Class already in subject");
-    }
-
-    subject.getClasses().add(classEntity);
+    request.getClasses().forEach(classId -> {
+      ClassEntity classEntity = classRepository.findClassById(classId);
+      if (classEntity == null) {
+        response.add(classId + "Invalid class id");
+      }else{
+        if (classEntity.getSubjects().contains(subject)) {
+          response.add(classEntity.getName() + " already in subject");
+        }else{
+          response.add(classEntity.getName()  + " added to subject");
+          subject.getClasses().add(classEntity);
+        }
+      }
+    });
     subjectRepository.save(subject);
-    return "Class added to subject with success";
+    return response;
   }
 
   public String createClass(String document, CreateClassDto request) {
@@ -279,5 +281,42 @@ public class TeacherService {
     lesson.setToken_expiration(LocalDateTime.now().plusSeconds(10));
     lessonRepository.save(lesson);
     return token;
+  }
+
+  public List<String> markPresenceToStudent(String document, UUID lessonId, MarkLessonStudentPresenceDto request) {
+    LessonEntity lesson = lessonRepository.findLessonById(lessonId);
+    UserEntity teacher = repository.findTeacherByDocument(document);
+    List<String> response = new ArrayList<>();
+
+    if (teacher == null) {
+      throw new RuntimeException("Invalid teacher document");
+    }
+
+    if (lesson == null) {
+      throw new RuntimeException("Invalid lesson token");
+    }
+
+    if (lesson.getSubject().getTeacher().getId() != teacher.getId()) {
+      throw new RuntimeException("This lesson does not belong to this teacher");
+    }
+
+    request.getStudents().forEach(student -> {
+      UserEntity user = repository.findStudentByDocument(student);
+      if (user == null || !user.getRole().equals("student")) {
+        throw new RuntimeException("Invalid student document");
+      }
+      if (repository.findUsersLessonToday(user.getId(), lesson.getId()).contains(user)) {
+        response.add(user.getName() + " is already marked as present");
+      } else {
+        UserLessonEntity userLesson = new UserLessonEntity();
+        userLesson.setLesson(lesson);
+        userLesson.setUser(user);
+        userLesson.setCreatedAt(LocalDateTime.now());
+        userLessonRepository.save(userLesson);
+        response.add(user.getName() + " marked as present");
+      }
+    });
+
+    return response;
   }
 }
