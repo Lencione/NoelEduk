@@ -144,6 +144,11 @@
 					<target>11</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.15.0</version>
+			</plugin>
 		</plugins>
 	</build>
 
