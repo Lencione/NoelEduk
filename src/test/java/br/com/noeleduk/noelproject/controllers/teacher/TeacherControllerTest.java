@@ -1,67 +1,63 @@
 package br.com.noeleduk.noelproject.controllers.teacher;
 
-import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
-import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
-import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
-import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
-import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
-import br.com.noeleduk.noelproject.dto.user.GetUserDto;
 import br.com.noeleduk.noelproject.services.TeacherService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
-import java.util.UUID;
-
+import static br.com.noeleduk.noelproject.commons.ClassConstraints.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
-class TeacherControllerTest {
+@ExtendWith(MockitoExtension.class)
+public class TeacherControllerTest {
+    @InjectMocks
+    private TeacherController teacherController;
 
     @Mock
     private TeacherService teacherService;
 
-    @InjectMocks
-    private TeacherController teacherController;
+    @Test
+    public void createClass_withValidTeacherDocument_returnsCreatedClass() {
+        when(teacherService.createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO)).thenReturn(CLASS_CREATED);
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+        ResponseEntity<ResponseDto> sut = teacherController.createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO);
+
+        verify(teacherService, times(1)).createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO);
+        assertThat(sut).isEqualTo(CREATE_CLASS_RESPONSE);
     }
 
     @Test
-    void testCreateClass() {
-        // Arrange
-        CreateClassDto createClassDto = new CreateClassDto();
-        ResponseEntity<ResponseDto> expectedResponse = ResponseEntity.ok(new ResponseDto("Created class successfully", true, null));
-        when(teacherService.createClass(anyString(), any(CreateClassDto.class))).thenReturn(null);
+    void createClass_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        when(teacherService.createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
 
-        // Act
-        ResponseEntity<ResponseDto> response = teacherController.createClass("document", createClassDto);
+        ResponseEntity<ResponseDto> sut = teacherController.createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO);
 
-        // Assert
-        verify(teacherService, times(1)).createClass(anyString(), any(CreateClassDto.class));
-        // Add more assertions as needed based on your requirements
+        verify(teacherService, times(1)).createClass(TEACHER_DOCUMENT, CREATE_CLASS_DTO);
+        assertThat(sut).isEqualTo(INVALID_CREATE_CLASS_RESPONSE);
     }
 
-    // Write similar tests for other controller methods...
+    @Test
+    public void getClasses_withValidTeacherDocument_returnsClasses() {
+        when(teacherService.getClassesByTeacherDocument(TEACHER_DOCUMENT)).thenReturn(GET_CLASS_DTO_LIST);
+
+        ResponseEntity<ResponseDto> sut = teacherController.getClasses(TEACHER_DOCUMENT);
+
+        verify(teacherService, times(1)).getClassesByTeacherDocument(TEACHER_DOCUMENT);
+        assertThat(sut).isEqualTo(GET_CLASSES_RESPONSE);
+    }
 
     @Test
-    void testGetAllTeachers() {
-        // Arrange
-        GetUserDto getUserDto = new GetUserDto();
-        when(teacherService.getAllTeachers()).thenReturn(Collections.singletonList(getUserDto));
+    void getClasses_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        when(teacherService.getClassesByTeacherDocument(TEACHER_DOCUMENT)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
 
-        // Act
-        ResponseEntity<ResponseDto> response = teacherController.getAllTeachers();
+        ResponseEntity<ResponseDto> sut = teacherController.getClasses(TEACHER_DOCUMENT);
 
-        // Assert
-        verify(teacherService, times(1)).getAllTeachers();
-        // Add more assertions as needed based on your requirements
+        verify(teacherService, times(1)).getClassesByTeacherDocument(TEACHER_DOCUMENT);
+        assertThat(sut).isEqualTo(INVALID_GET_CLASSES_RESPONSE);
     }
 }
