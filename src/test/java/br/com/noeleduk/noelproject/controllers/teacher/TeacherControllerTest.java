@@ -100,4 +100,24 @@ public class TeacherControllerTest {
         verify(teacherService, times(1)).getStudentsByClassId(MOCK_DOCUMENT, MOCK_UUID);
         assertThat(sut).isEqualTo(INVALID_GET_STUDENTS_RESPONSE);
     }
+
+    @Test
+    public void getSubjects_withValidTeacherDocument_returnsClasses() {
+        when(teacherService.getSubjectsByTeacherDocument(MOCK_DOCUMENT)).thenReturn(GET_SUBJECT_DTO_LIST);
+
+        ResponseEntity<ResponseDto> sut = teacherController.getSubjects(MOCK_DOCUMENT);
+
+        verify(teacherService, times(1)).getSubjectsByTeacherDocument(MOCK_DOCUMENT);
+        assertThat(sut).isEqualTo(GET_SUBJECTS_RESPONSE);
+    }
+
+    @Test
+    void getSubjects_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        when(teacherService.getSubjectsByTeacherDocument(MOCK_DOCUMENT)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
+
+        ResponseEntity<ResponseDto> sut = teacherController.getSubjects(MOCK_DOCUMENT);
+
+        verify(teacherService, times(1)).getSubjectsByTeacherDocument(MOCK_DOCUMENT);
+        assertThat(sut).isEqualTo(INVALID_GET_SUBJECTS_RESPONSE);
+    }
 }
