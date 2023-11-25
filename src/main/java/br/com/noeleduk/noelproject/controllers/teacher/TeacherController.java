@@ -2,14 +2,12 @@ package br.com.noeleduk.noelproject.controllers.teacher;
 
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
 import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
+import br.com.noeleduk.noelproject.dto.lessons.MarkLessonStudentPresenceDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
-import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
-import br.com.noeleduk.noelproject.entities.ClassEntity;
 import br.com.noeleduk.noelproject.services.TeacherService;
-import io.swagger.annotations.SwaggerDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/teachers")
+@CrossOrigin("*")
 public class TeacherController {
   private final TeacherService service;
 
@@ -163,6 +162,19 @@ public class TeacherController {
       );
     }
   }
+
+  @PostMapping("{document}/lessons/{id}/markPresences")
+  public ResponseEntity<ResponseDto> markPresences(@PathVariable String document, @PathVariable UUID id, @RequestBody MarkLessonStudentPresenceDto request) {
+    try {
+      return ResponseEntity.ok(
+              new ResponseDto("Presences marked successfully", true, service.markPresenceToStudent(document, id, request))
+      );
+    } catch (Exception e) {
+      return ResponseEntity.badRequest().body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
   //endregion
 
   //region Teachers
@@ -193,6 +205,21 @@ public class TeacherController {
       );
     }
   }
+
+  @GetMapping("/{document}")
+  public ResponseEntity<ResponseDto> getUserByDocument(@PathVariable String document) {
+    try {
+      GetUserDto user = service.getTeacherByDocument(document);
+      return ResponseEntity.ok().body(
+              new ResponseDto("User found", true, user)
+      );
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+              new ResponseDto(e.getMessage(), false, null)
+      );
+    }
+  }
+
 
   //endregion
 

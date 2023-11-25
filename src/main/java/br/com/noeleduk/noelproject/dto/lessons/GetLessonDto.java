@@ -3,8 +3,7 @@ package br.com.noeleduk.noelproject.dto.lessons;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -12,9 +11,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class GetLessonDto {
   private UUID id;
-  private Date date;
+  private LocalDate date;
   private String description;
+  private String subjectName;
+  private String subjectTeacherName;
   private String justification;
   private boolean exam;
   private boolean active;
+  private int weekOfYear;
 }

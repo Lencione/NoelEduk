@@ -1,7 +1,6 @@
 package br.com.noeleduk.noelproject.repositories;
 
 import br.com.noeleduk.noelproject.entities.LessonEntity;
-import br.com.noeleduk.noelproject.entities.SubjectEntity;
 import br.com.noeleduk.noelproject.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -55,4 +54,7 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
   @Query("SELECT U FROM UserEntity U WHERE U.document = ?1 AND U.role = 'teacher'")
   UserEntity findTeacherByDocument(String document);
+
+  @Query("SELECT U.user FROM UserLessonEntity U WHERE U.user.id = ?1 AND U.lesson.id = ?2 AND DATE(U.createdAt) = CURRENT_DATE")
+  List<UserEntity> findUsersLessonToday(UUID id, UUID id1);
 }

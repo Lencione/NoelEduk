@@ -1,4 +1,4 @@
-package br.com.noeleduk.noelproject.dto.classes;
+package br.com.noeleduk.noelproject.dto.lessons;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddStudentToClassDto {
-  private List<String> documents;
+public class MarkLessonStudentPresenceDto {
+  private List<String> students;
 }

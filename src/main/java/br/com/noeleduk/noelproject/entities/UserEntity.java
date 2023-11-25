@@ -3,13 +3,8 @@ package br.com.noeleduk.noelproject.entities;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +29,7 @@ public class UserEntity {
     private String phone;
     private String role;
     private String document;
+    private String course;
     private int edukoins;
     private String avatar;
     private int points;
@@ -41,11 +37,8 @@ public class UserEntity {
     @ManyToMany(mappedBy = "students")
     private List<ClassEntity> classes;
 
-    @ManyToMany
-    @JoinTable(name = "users_lessons",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "lesson_id"))
-    private List<LessonEntity> lessons;
+    @OneToMany(mappedBy = "user")
+    private List<UserLessonEntity> userLessons;
 
     @OneToMany(mappedBy = "teacher")
     private List<SubjectEntity> subjects;

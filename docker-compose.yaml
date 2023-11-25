@@ -1,0 +1,28 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    restart: unless-stopped
+    tty: true
+    networks:
+      - noel-network
+    environment:
+      POSTGRES_DB: noel_eduk
+      POSTGRES_USER: noel
+      POSTGRES_PASSWORD: noel#123.
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./db/data :/var/www/postgresql/data
+
+  noel_eduk:
+    build: .
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    networks:
+      - noel-network
+networks:
+  noel-network:
+    driver: bridge

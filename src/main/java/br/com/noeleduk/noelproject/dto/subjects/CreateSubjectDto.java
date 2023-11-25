@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class CreateSubjectDto {
   private String name;
-  private String document;
   private String google_code;
   private int week_day;
   private LocalDate start_date;

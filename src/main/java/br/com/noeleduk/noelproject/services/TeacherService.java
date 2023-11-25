@@ -3,65 +3,48 @@ package br.com.noeleduk.noelproject.services;
 import br.com.noeleduk.noelproject.dto.classes.AddStudentToClassDto;
 import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
 import br.com.noeleduk.noelproject.dto.classes.GetClassDto;
+import br.com.noeleduk.noelproject.dto.lessons.GetFormattedLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetLessonDto;
-import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
+import br.com.noeleduk.noelproject.dto.lessons.MarkLessonStudentPresenceDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.GetSubjectDto;
-import br.com.noeleduk.noelproject.dto.user.CreateUserDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
-import br.com.noeleduk.noelproject.dto.user.LoggedUserDto;
-import br.com.noeleduk.noelproject.entities.ClassEntity;
-import br.com.noeleduk.noelproject.entities.LessonEntity;
-import br.com.noeleduk.noelproject.entities.SubjectEntity;
-import br.com.noeleduk.noelproject.entities.UserEntity;
-import br.com.noeleduk.noelproject.helpers.Utils;
-import br.com.noeleduk.noelproject.repositories.ClassRepository;
-import br.com.noeleduk.noelproject.repositories.LessonRepository;
-import br.com.noeleduk.noelproject.repositories.SubjectRepository;
-import br.com.noeleduk.noelproject.repositories.UserRepository;
-import org.apache.catalina.User;
+import br.com.noeleduk.noelproject.entities.*;
+import br.com.noeleduk.noelproject.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.time.temporal.WeekFields;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class TeacherService {
   private final UserRepository repository;
-  private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
   private final SubjectRepository subjectRepository;
-
   private final ClassRepository classRepository;
   private final LessonRepository lessonRepository;
-
+  private final SubjectService subjectService;
+  private final UserLessonRepository userLessonRepository;
 
   @Autowired
   public TeacherService(
           UserRepository repository,
-          PasswordEncoder passwordEncoder,
           ModelMapper modelMapper,
           SubjectRepository subjectRepository,
           ClassRepository classRepository,
-          LessonRepository lessonRepository) {
+          LessonRepository lessonRepository, SubjectService subjectService, UserLessonRepository userLessonRepository) {
     this.repository = repository;
-    this.passwordEncoder = passwordEncoder;
     this.modelMapper = modelMapper;
     this.subjectRepository = subjectRepository;
     this.classRepository = classRepository;
     this.lessonRepository = lessonRepository;
+    this.subjectService = subjectService;
+    this.userLessonRepository = userLessonRepository;
   }
 
   public List<GetUserDto> getAllTeachers() {
@@ -99,14 +82,31 @@ public class TeacherService {
     return modelMapper.map(user, GetUserDto.class);
   }
 
-  public List<GetLessonDto> getLessonsByTeacherDocument(String document) {
+  public List<GetFormattedLessonsDto<GetLessonDto>> getLessonsByTeacherDocument(String document) {
     UserEntity teacher = repository.findTeacherByDocument(document);
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher email");
     }
-    return teacher.getSubjects().stream()
+
+    Map<Integer, List<GetLessonDto>> lessonsByWeek = teacher.getSubjects().stream()
             .flatMap(subject -> subject.getLessons().stream())
-            .map(lesson -> modelMapper.map(lesson, GetLessonDto.class))
+            .map(lesson -> {
+              GetLessonDto lessonDto = modelMapper.map(lesson, GetLessonDto.class);
+              WeekFields weekFields = WeekFields.of(Locale.getDefault());
+              int weekNumber = lessonDto.getDate().get(weekFields.weekOfWeekBasedYear());
+              lessonDto.setWeekOfYear(weekNumber);
+              return lessonDto;
+            })
+            .sorted(Comparator.comparing(GetLessonDto::getDate))
+            .collect(Collectors.groupingBy(GetLessonDto::getWeekOfYear));
+
+    return lessonsByWeek.entrySet().stream()
+            .map(entry -> {
+              GetFormattedLessonsDto<GetLessonDto> weekLessonsDto = new GetFormattedLessonsDto<GetLessonDto>();
+              weekLessonsDto.setWeek(entry.getKey());
+              weekLessonsDto.setWeekLessons(entry.getValue());
+              return weekLessonsDto;
+            })
             .collect(Collectors.toList());
   }
 
@@ -122,7 +122,7 @@ public class TeacherService {
       throw new RuntimeException("Subject not found");
     }
 
-    if(subject.getTeacher() != teacher) {
+    if (subject.getTeacher() != teacher) {
       throw new RuntimeException("Subject does not belong to teacher");
     }
 
@@ -147,22 +147,15 @@ public class TeacherService {
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher document");
     }
-    SubjectEntity subject = new SubjectEntity();
-    subject.setName(request.getName());
-    subject.setTeacher(teacher);
-    subject.setGoogleCode(request.getGoogle_code());
-    subject.setWeek_day(request.getWeek_day());
-    subject.setStart_date(Utils.getDateFromLocalDate(request.getStart_date()));
-    subject.setEnd_date(Utils.getDateFromLocalDate(request.getEnd_date()));
-    subject = subjectRepository.save(subject);
-
+    SubjectEntity subject = subjectService.create(teacher, request);
     return modelMapper.map(subject, GetSubjectDto.class);
-
   }
 
 
-  public String addClassToSubject(String document, UUID id, AddClassToSubjectDto request) {
+  public List<String> addClassToSubject(String document, UUID id, AddClassToSubjectDto request) {
     UserEntity teacher = repository.findTeacherByDocument(document);
+    List<String> response = new ArrayList<>();
+
     if (teacher == null) {
       throw new RuntimeException("Invalid teacher document");
     }
@@ -175,18 +168,21 @@ public class TeacherService {
       throw new RuntimeException("This subject does not belong to this teacher");
     }
 
-    ClassEntity classEntity = classRepository.findClassById(request.getClass_id());
-    if (classEntity == null) {
-      throw new RuntimeException("Invalid class id");
-    }
-
-    if (classEntity.getSubjects().contains(subject)) {
-      throw new RuntimeException("Class already in subject");
-    }
-
-    subject.getClasses().add(classEntity);
+    request.getClasses().forEach(classId -> {
+      ClassEntity classEntity = classRepository.findClassById(classId);
+      if (classEntity == null) {
+        response.add(classId + "Invalid class id");
+      }else{
+        if (classEntity.getSubjects().contains(subject)) {
+          response.add(classEntity.getName() + " already in subject");
+        }else{
+          response.add(classEntity.getName()  + " added to subject");
+          subject.getClasses().add(classEntity);
+        }
+      }
+    });
     subjectRepository.save(subject);
-    return "Class added to subject with success";
+    return response;
   }
 
   public String createClass(String document, CreateClassDto request) {
@@ -223,20 +219,30 @@ public class TeacherService {
       throw new RuntimeException("Invalid class id");
     }
 
-    UserEntity student = repository.findStudentByDocument(request.getDocument());
-    if (student == null) {
-      throw new RuntimeException("Invalid student document");
+    List<String> documents = request.getDocuments();
+    if (documents.isEmpty()) {
+      throw new RuntimeException("Empty document list");
     }
 
-    if (classEntity.getStudents().contains(student)) {
-      throw new RuntimeException("Student already in class");
-    }
+    //for each document in the list, check if the student exists and if the student is not already in the class
+    documents.forEach(studentDocument -> {
+      UserEntity student = repository.findStudentByDocument(studentDocument);
+      if (student == null) {
+        throw new RuntimeException("Invalid student document");
+      }
 
-    classEntity.getStudents().add(student);
+      if (classEntity.getStudents().contains(student)) {
+        throw new RuntimeException("Student already in class");
+      }
+
+      classEntity.getStudents().add(student);
+    });
+
     classRepository.save(classEntity);
     return "Student added to class with success";
   }
 
+  // Now accept a list of documents and add them to the class
   public Object getStudentsByClassId(String document, UUID id) {
     UserEntity teacher = repository.findTeacherByDocument(document);
 
@@ -252,6 +258,7 @@ public class TeacherService {
     return classEntity.getStudents().stream().map(student -> modelMapper.map(student, GetUserDto.class)).collect(Collectors.toList());
   }
 
+
   public String createLessonToken(String document, UUID id) {
     UserEntity teacher = repository.findTeacherByDocument(document);
 
@@ -264,7 +271,7 @@ public class TeacherService {
       throw new RuntimeException("Invalid lesson id");
     }
 
-    if(lesson.getSubject().getTeacher().getId() != teacher.getId()){
+    if (lesson.getSubject().getTeacher().getId() != teacher.getId()) {
       throw new RuntimeException("This lesson does not belong to this teacher");
     }
 
@@ -274,5 +281,42 @@ public class TeacherService {
     lesson.setToken_expiration(LocalDateTime.now().plusSeconds(10));
     lessonRepository.save(lesson);
     return token;
+  }
+
+  public List<String> markPresenceToStudent(String document, UUID lessonId, MarkLessonStudentPresenceDto request) {
+    LessonEntity lesson = lessonRepository.findLessonById(lessonId);
+    UserEntity teacher = repository.findTeacherByDocument(document);
+    List<String> response = new ArrayList<>();
+
+    if (teacher == null) {
+      throw new RuntimeException("Invalid teacher document");
+    }
+
+    if (lesson == null) {
+      throw new RuntimeException("Invalid lesson token");
+    }
+
+    if (lesson.getSubject().getTeacher().getId() != teacher.getId()) {
+      throw new RuntimeException("This lesson does not belong to this teacher");
+    }
+
+    request.getStudents().forEach(student -> {
+      UserEntity user = repository.findStudentByDocument(student);
+      if (user == null || !user.getRole().equals("student")) {
+        throw new RuntimeException("Invalid student document");
+      }
+      if (repository.findUsersLessonToday(user.getId(), lesson.getId()).contains(user)) {
+        response.add(user.getName() + " is already marked as present");
+      } else {
+        UserLessonEntity userLesson = new UserLessonEntity();
+        userLesson.setLesson(lesson);
+        userLesson.setUser(user);
+        userLesson.setCreatedAt(LocalDateTime.now());
+        userLessonRepository.save(userLesson);
+        response.add(user.getName() + " marked as present");
+      }
+    });
+
+    return response;
   }
 }
