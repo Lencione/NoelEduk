@@ -12,4 +12,6 @@ public class GetUserPresenceDto {
   private Long presences;
   private Long fouls;
   private Long total;
+  private String googleCode;
+  private String teacherName;
 }

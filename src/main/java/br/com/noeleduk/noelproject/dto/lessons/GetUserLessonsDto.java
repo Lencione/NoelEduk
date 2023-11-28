@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class GetUserLessonsDto {
   private LocalDate date;
   private String lessonId;
+  private String subjectId;
   private String subjectName;
   private String subjectTeacherName;
   private String description;

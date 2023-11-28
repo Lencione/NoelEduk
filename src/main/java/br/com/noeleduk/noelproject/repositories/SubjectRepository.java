@@ -17,19 +17,21 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity, UUID> {
 
   List<SubjectEntity> findSubjectsByTeacher(UserEntity teacher);
 
-@Query("SELECT s.name as subjectName, " +
-        "(SELECT COUNT(l) FROM LessonEntity l WHERE l.subject = s) as total, " +
-        "(SELECT COUNT(ul) FROM UserLessonEntity ul " +
-        "JOIN ul.lesson l2 " +
-        "JOIN l2.subject s3 " +
-        "WHERE ul.user.id = ?1 AND s3 = s) as presences, " +
-        "((SELECT COUNT(l) FROM LessonEntity l WHERE l.subject = s and DATE(l.date) < CURRENT_DATE ) - " +
-        "(SELECT COUNT(ul) FROM UserLessonEntity ul " +
-        "JOIN ul.lesson l2 " +
-        "JOIN l2.subject s3 " +
-        "WHERE ul.user.id =?1 AND s3 = s)) as faults " +
-        "FROM SubjectEntity s " +
-        "GROUP BY s.id, s.name")
+  @Query("SELECT s.name as subjectName, " +
+          "s.teacher.name as teacherName, " +
+          "s.googleCode as googleCode, " +
+          "(SELECT COUNT(l) FROM LessonEntity l WHERE l.subject = s) as total, " +
+          "(SELECT COUNT(ul) FROM UserLessonEntity ul " +
+          "JOIN ul.lesson l2 " +
+          "JOIN l2.subject s3 " +
+          "WHERE ul.user.id = ?1 AND s3 = s) as presences, " +
+          "((SELECT COUNT(l) FROM LessonEntity l WHERE l.subject = s and DATE(l.date) < CURRENT_DATE ) - " +
+          "(SELECT COUNT(ul) FROM UserLessonEntity ul " +
+          "JOIN ul.lesson l2 " +
+          "JOIN l2.subject s3 " +
+          "WHERE ul.user.id =?1 AND s3 = s)) as faults " +
+          "FROM SubjectEntity s " +
+          "GROUP BY s.id, s.name, s.googleCode, s.teacher.name")
 
   List<Object[]> findAllSubjectsByUserId(UUID student);
 }
