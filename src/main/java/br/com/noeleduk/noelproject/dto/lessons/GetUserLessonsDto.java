@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public class GetUserLessonsDto {
   private LocalDate date;
   private String lessonId;
-  private String subjectId;
   private String subjectName;
   private String subjectTeacherName;
   private String description;
   private String justification;
+  private boolean status;
   private boolean exam;
   private boolean active;
   private int weekOfYear;

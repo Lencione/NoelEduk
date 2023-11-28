@@ -70,6 +70,7 @@ public class UserService {
     Map<Integer, List<GetUserLessonsDto>> lessonsByWeek = lessons.stream()
             .map(lesson -> {
               GetUserLessonsDto dto = modelMapper.map(lesson, GetUserLessonsDto.class);
+              dto.setStatus(userLessonRepository.existsByUserAndLesson(user, lesson));
               WeekFields weekFields = WeekFields.of(Locale.getDefault());
               int weekNumber = dto.getDate().get(weekFields.weekOfWeekBasedYear());
               dto.setWeekOfYear(weekNumber);

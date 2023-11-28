@@ -13,6 +13,7 @@ public class GetLessonDto {
   private UUID id;
   private LocalDate date;
   private String description;
+  private String subjectId;
   private String subjectName;
   private String subjectTeacherName;
   private String justification;
