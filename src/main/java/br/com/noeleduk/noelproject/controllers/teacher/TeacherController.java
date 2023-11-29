@@ -112,7 +112,7 @@ public class TeacherController {
   @PostMapping("/{document}/subjects/{id}/addClass")
   public ResponseEntity<ResponseDto> addClass(@PathVariable String document, @PathVariable UUID id, @RequestBody AddClassToSubjectDto request) {
     try {
-      return ResponseEntity.ok(// Ad class to subject
+      return ResponseEntity.ok(
               new ResponseDto("Class added to subject successfully", true, service.addClassToSubject(document, id, request))
       );
     } catch (Exception e) {

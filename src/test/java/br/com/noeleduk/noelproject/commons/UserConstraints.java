@@ -30,8 +30,8 @@ public class UserConstraints {
     public static final LoginRequestDto LOGIN_REQUEST_DTO = new LoginRequestDto("email@al.unieduk.com.br", "12345678");
     public static final LoginRequestDto INVALID_LOGIN_REQUEST_DTO = new LoginRequestDto("email@al.unieduk.com.br", "12345678");
     public static final LoginRequestDto NOT_FOUND_LOGIN_REQUEST_DTO = new LoginRequestDto("not_email@al.unieduk.com.br", "87654321");
-    public static final LoggedUserDto LOGGED_USER_DTO = new LoggedUserDto("a45f2350-88ce-11ee-b9d1-0242ac120002", LocalDateTime.now(), "student");
-    public static final CreateUserDto CREATE_USER_DTO = new CreateUserDto("pix.silva@al.unieduk.com.br", "12345678", "53923153815", "641075586", "Pix da Silva", "19996328763", "12224577","https://gravatar.com/avatar/dd95411d45214301e2673e1c6a8f5d47?s=400&d=robohash&r=x");
+    public static final LoggedUserDto LOGGED_USER_DTO = new LoggedUserDto("a45f2350-88ce-11ee-b9d1-0242ac120002", LocalDateTime.now(), "student", "12224577", "Ciência Da Computação");
+    public static final CreateUserDto CREATE_USER_DTO = new CreateUserDto("pix.silva@al.unieduk.com.br", "12345678", "53923153815", "641075586", "Pix da Silva", "19996328763", "12224577","https://gravatar.com/avatar/dd95411d45214301e2673e1c6a8f5d47?s=400&d=robohash&r=x", "Ciência Da Computação");
 
     // Responses
     public static final ResponseEntity<ResponseDto> LOGIN_USER_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USER_FOUND, true, LOGGED_USER_DTO));
