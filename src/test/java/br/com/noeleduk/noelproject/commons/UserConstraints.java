@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class UserConstraints {
 
     // Messages
-    public static final String USER_FOUND = "User found";
+    public static final String USER_FOUND = "User found successfully";
     public static final String USER_NOT_FOUND = "User not found";
     public static final String INVALID_PASSWORD = "Invalid password";
     public static final String INVALID_EMAIL = "Email invalido (prof.unieduk.com.br ou al.unieduk.com.br)";

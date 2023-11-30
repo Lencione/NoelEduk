@@ -5,6 +5,7 @@ import br.com.noeleduk.noelproject.dto.classes.CreateClassDto;
 import br.com.noeleduk.noelproject.dto.classes.GetClassDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetFormattedLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.GetLessonDto;
+import br.com.noeleduk.noelproject.dto.lessons.GetUserLessonsDto;
 import br.com.noeleduk.noelproject.dto.lessons.MarkLessonStudentPresenceDto;
 import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
@@ -19,6 +20,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import static br.com.noeleduk.noelproject.commons.UserConstraints.USER_NOT_FOUND;
 
 public class ClassConstraints {
 
@@ -41,11 +44,14 @@ public class ClassConstraints {
     public static final String STUDENT_ADDED_TO_CLASS = "Student added to class with success";
     public static final String STUDENTS_FOUND = "Students found successfully";
     public static final String TEACHERS_FOUND = "Teachers found";
+    public static final String USERS_FOUND = "Users found successfully";
     public static final String TEACHER_NOT_FOUND = "Teacher not found";
     public static final String TEACHERS_NOT_FOUND = "Teachers not found";
+    public static final String USERS_NOT_FOUND = "Users not found";
     public static final String SUBJECTS_FOUND = "Subjects found successfully";
     public static final String LESSONS_FOUND = "Lessons found successfully";
-    public static final String USER_FOUND = "User found";
+    public static final String LESSONS_NOT_FOUND = "Lessons not found";
+    public static final String USER_FOUND = "User found successfully";
     public static final String SUBJECT_CREATED = "Subject created successfully";
     public static final String TOKEN_CREATED = "Token created successfully";
     public static final String CLASS_ADDED_TO_SUBJECT = "Class added to subject successfully";
@@ -67,17 +73,25 @@ public class ClassConstraints {
     public static final GetLessonDto GET_LESSON_DTO_2 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de SQL", "654321","Banco de Dados 3", "Luciano Calderoni", "Justificação", true, true, 12);
     public static final GetLessonDto GET_LESSON_DTO_3 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de LISTA", "123654","Estrutura de Dados", "Carlos Miglinks", "Justificação", true, true, 8);
     public static final GetLessonDto GET_LESSON_DTO_4 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de REDES", "654123","Redes Móveis", "Nadir Dias", "Justificação", true, true, 8);
+    public static final GetUserLessonsDto GET_USER_LESSONS_DTO_1 = new GetUserLessonsDto(LocalDate.now(), "123456", "Conceitos avançados de JDBC", "Marco Miquelino","Programação Orientada a Objetos", "Justificação", true, true, true, 12);
+    public static final GetUserLessonsDto GET_USER_LESSONS_DTO_2 = new GetUserLessonsDto(LocalDate.now(), "654321","Conceitos avançados de SQL", "Luciano Calderoni","Banco de Dados 3", "Justificação", true, true, true, 12);
+    public static final GetUserLessonsDto GET_USER_LESSONS_DTO_3 = new GetUserLessonsDto(LocalDate.now(), "123654","Conceitos avançados de LISTA", "Carlos Miglinks","Estrutura de Dados", "Justificação", true, true, true, 8);
+    public static final GetUserLessonsDto GET_USER_LESSONS_DTO_4 = new GetUserLessonsDto(LocalDate.now(), "654123","Conceitos avançados de REDES", "Nadir Dias","Redes Móveis", "Justificação", true, true, true, 8);
     public static final MarkUserPresenceDto MARK_USER_PRESENCE_DTO = new MarkUserPresenceDto(MOCK_TOKEN_1);
     public static final MarkLessonStudentPresenceDto MARK_LESSON_STUDENT_PRESENCE_DTO = new MarkLessonStudentPresenceDto(Arrays.asList(MOCK_DOCUMENT_1, MOCK_DOCUMENT_2));
 
     // Lists
     public static final List<GetClassDto> GET_CLASS_DTO_LIST = Arrays.asList(GET_CLASS_DTO_1, GET_CLASS_DTO_2);
     public static final List<GetUserDto> GET_USER_DTO_LIST = Arrays.asList(GET_USER_DTO_1, GET_USER_DTO_2);
+    public static final List<GetLessonDto> GET_LESSON_DTO_LIST = Arrays.asList(GET_LESSON_DTO_1, GET_LESSON_DTO_2);
     public static final List<GetSubjectDto> GET_SUBJECT_DTO_LIST = Arrays.asList(GET_SUBJECT_DTO_1, GET_SUBJECT_DTO_2);
     public static final List<String> ADD_CLASS_TO_SUBJECT_LIST = Arrays.asList("Banco de Dados added to subject", "Estrutura de Dados already in subject");
     public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_1 = new GetFormattedLessonsDto<>(12, Arrays.asList(GET_LESSON_DTO_1, GET_LESSON_DTO_2));
     public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_2 = new GetFormattedLessonsDto<>(8, Arrays.asList(GET_LESSON_DTO_3, GET_LESSON_DTO_4));
+    public static final GetFormattedLessonsDto<GetUserLessonsDto> GET_FORMATTED_USER_LESSONS_DTO_1 = new GetFormattedLessonsDto<>(12, Arrays.asList(GET_USER_LESSONS_DTO_1, GET_USER_LESSONS_DTO_2));
+    public static final GetFormattedLessonsDto<GetUserLessonsDto> GET_FORMATTED_USER_LESSONS_DTO_2 = new GetFormattedLessonsDto<>(8, Arrays.asList(GET_USER_LESSONS_DTO_3, GET_USER_LESSONS_DTO_4));
     public static final List<GetFormattedLessonsDto<GetLessonDto>> GET_FORMATTED_LESSONS_DTO_LIST = Arrays.asList(GET_FORMATTED_LESSONS_DTO_1, GET_FORMATTED_LESSONS_DTO_2);
+    public static final List<GetFormattedLessonsDto<GetUserLessonsDto>> GET_FORMATTED_USER_LESSONS_DTO_LIST = Arrays.asList(GET_FORMATTED_USER_LESSONS_DTO_1, GET_FORMATTED_USER_LESSONS_DTO_2);
     public static final List<String> MARK_USER_PRESENCE_LIST = Arrays.asList("Rafael Menegon is already marked as present", "Glauber Silva marked as present");
 
     // Responses
@@ -106,9 +120,15 @@ public class ClassConstraints {
 
     public static final ResponseEntity<ResponseDto> INVALID_MARK_LESSON_STUDENT_PRESENCE_DTO_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(INVALID_TEACHER_DOCUMENT, false, null));
     public static final ResponseEntity<ResponseDto> GET_ALL_TEACHERS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(TEACHERS_FOUND, true, GET_USER_DTO_LIST));
+    public static final ResponseEntity<ResponseDto> GET_ALL_USERS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USERS_FOUND, true, GET_USER_DTO_LIST));
     public static final ResponseEntity<ResponseDto> NOT_FOUND_TEACHERS_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(TEACHERS_NOT_FOUND, false, null));
+    public static final ResponseEntity<ResponseDto> NOT_FOUND_USERS_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(USERS_NOT_FOUND, false, null));
+    public static final ResponseEntity<ResponseDto> NOT_FOUND_USER_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(USER_NOT_FOUND, false, null));
     public static final ResponseEntity<ResponseDto> GET_TEACHER_BY_EMAIL_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USER_FOUND, true, GET_USER_DTO_1));
+    public static final ResponseEntity<ResponseDto> GET_USER_BY_EMAIL_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USER_FOUND, true, GET_USER_DTO_1));
     public static final ResponseEntity<ResponseDto> NOT_FOUND_TEACHER_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(TEACHER_NOT_FOUND, false, null));
     public static final ResponseEntity<ResponseDto> GET_TEACHER_BY_DOCUMENT_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USER_FOUND, true, GET_USER_DTO_1));
+    public static final ResponseEntity<ResponseDto> GET_STUDENT_LESSONS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(LESSONS_FOUND, true, GET_FORMATTED_USER_LESSONS_DTO_LIST));
+    public static final ResponseEntity<ResponseDto> NOT_FOUND_LESSONS_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(LESSONS_NOT_FOUND, false, null));
 
 }
