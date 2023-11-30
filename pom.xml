@@ -148,6 +148,13 @@
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>1.15.0</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>1.2.1</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<targetClasses>
 						<param>br.com.noeleduk.noelproject*</param>
@@ -183,7 +190,11 @@
 						</goals>
 						<configuration>
 							<dataFile>target/jacoco.exec</dataFile>
-							<outputDirectory>target/my-reports</outputDirectory>
+							<outputDirectory>target/jacoco-reports</outputDirectory>
+							<excludes>
+								<exclude>**/dto/**/*</exclude>
+								<exclude>**/entities/**/*</exclude>
+							</excludes>
 						</configuration>
 					</execution>
 				</executions>
