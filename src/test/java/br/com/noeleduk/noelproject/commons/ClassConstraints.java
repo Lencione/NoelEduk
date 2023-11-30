@@ -75,8 +75,8 @@ public class ClassConstraints {
     public static final List<GetUserDto> GET_USER_DTO_LIST = Arrays.asList(GET_USER_DTO_1, GET_USER_DTO_2);
     public static final List<GetSubjectDto> GET_SUBJECT_DTO_LIST = Arrays.asList(GET_SUBJECT_DTO_1, GET_SUBJECT_DTO_2);
     public static final List<String> ADD_CLASS_TO_SUBJECT_LIST = Arrays.asList("Banco de Dados added to subject", "Estrutura de Dados already in subject");
-    public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_1 = new GetFormattedLessonsDto<GetLessonDto>(12, Arrays.asList(GET_LESSON_DTO_1, GET_LESSON_DTO_2));
-    public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_2 = new GetFormattedLessonsDto<GetLessonDto>(8, Arrays.asList(GET_LESSON_DTO_3, GET_LESSON_DTO_4));
+    public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_1 = new GetFormattedLessonsDto<>(12, Arrays.asList(GET_LESSON_DTO_1, GET_LESSON_DTO_2));
+    public static final GetFormattedLessonsDto<GetLessonDto> GET_FORMATTED_LESSONS_DTO_2 = new GetFormattedLessonsDto<>(8, Arrays.asList(GET_LESSON_DTO_3, GET_LESSON_DTO_4));
     public static final List<GetFormattedLessonsDto<GetLessonDto>> GET_FORMATTED_LESSONS_DTO_LIST = Arrays.asList(GET_FORMATTED_LESSONS_DTO_1, GET_FORMATTED_LESSONS_DTO_2);
     public static final List<String> MARK_USER_PRESENCE_LIST = Arrays.asList("Rafael Menegon is already marked as present", "Glauber Silva marked as present");
 
