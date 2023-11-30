@@ -173,11 +173,11 @@ public class TeacherControllerTest {
 
     @Test
     void getStudentsBySubjectId_withInvalidTeacherDocument_returnsInvalidTeacher() {
-        when(teacherService.addClassToSubject(MOCK_DOCUMENT_1, MOCK_UUID_1, ADD_CLASS_TO_SUBJECT_DTO)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
+        when(teacherService.getStudentsBySubjectId(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
 
-        ResponseEntity<ResponseDto> sut = teacherController.addClass(MOCK_DOCUMENT_1, MOCK_UUID_1, ADD_CLASS_TO_SUBJECT_DTO);
+        ResponseEntity<ResponseDto> sut = teacherController.getStudentsBySubjectId(MOCK_UUID_1, MOCK_DOCUMENT_1);
 
-        verify(teacherService, times(1)).addClassToSubject(MOCK_DOCUMENT_1, MOCK_UUID_1, ADD_CLASS_TO_SUBJECT_DTO);
+        verify(teacherService, times(1)).getStudentsBySubjectId(MOCK_DOCUMENT_1, MOCK_UUID_1);
         assertThat(sut).isEqualTo(INVALID_STUDENTS_BY_SUBJECT_ID_RESPONSE);
     }
 
