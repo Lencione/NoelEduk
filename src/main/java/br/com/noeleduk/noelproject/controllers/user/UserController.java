@@ -27,7 +27,7 @@ public class UserController {
     try {
       List<GetUserDto> userEntities = service.getAllUsers();
       return ResponseEntity.ok().body(
-              new ResponseDto("Users found", true, userEntities)
+              new ResponseDto("Users found successfully", true, userEntities)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -39,7 +39,7 @@ public class UserController {
   public ResponseEntity<ResponseDto> getStudentLessons(@PathVariable String document){
     try{
       return ResponseEntity.ok().body(
-              new ResponseDto("Lessons found", true, service.getStudentLessons(document))
+              new ResponseDto("Lessons found successfully", true, service.getStudentLessons(document))
       );
     }catch (Exception e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -52,7 +52,7 @@ public class UserController {
     try {
       GetUserDto user = service.getUserByEmail(email);
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, user)
+              new ResponseDto("User found successfully", true, user)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -80,7 +80,7 @@ public class UserController {
     try {
       GetStudentCardDto card = service.getStudentCard(user);
       return ResponseEntity.ok().body(
-              new ResponseDto("Card found", true, card)
+              new ResponseDto("Card found successfully", true, card)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -94,7 +94,7 @@ public class UserController {
     try {
       List<GetUserPresenceDto> presences = service.getUserPresences(user);
       return ResponseEntity.ok().body(
-              new ResponseDto("Presences found", true, presences)
+              new ResponseDto("Presences found successfully", true, presences)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

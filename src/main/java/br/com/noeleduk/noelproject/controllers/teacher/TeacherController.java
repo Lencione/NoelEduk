@@ -197,7 +197,7 @@ public class TeacherController {
     try {
       GetUserDto user = service.getTeacherByEmail(email);
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, user)
+              new ResponseDto("User found successfully", true, user)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -211,7 +211,7 @@ public class TeacherController {
     try {
       GetUserDto user = service.getTeacherByDocument(document);
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, user)
+              new ResponseDto("User found successfully", true, user)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
