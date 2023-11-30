@@ -1,6 +1,5 @@
 package br.com.noeleduk.noelproject.repositories;
 
-import br.com.noeleduk.noelproject.dto.subjects.GetSubjectPresenceDto;
 import br.com.noeleduk.noelproject.entities.SubjectEntity;
 import br.com.noeleduk.noelproject.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

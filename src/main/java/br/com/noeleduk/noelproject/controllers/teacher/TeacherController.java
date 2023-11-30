@@ -112,7 +112,7 @@ public class TeacherController {
   @PostMapping("/{document}/subjects/{id}/addClass")
   public ResponseEntity<ResponseDto> addClass(@PathVariable String document, @PathVariable UUID id, @RequestBody AddClassToSubjectDto request) {
     try {
-      return ResponseEntity.ok(// Ad class to subject
+      return ResponseEntity.ok(
               new ResponseDto("Class added to subject successfully", true, service.addClassToSubject(document, id, request))
       );
     } catch (Exception e) {
@@ -197,7 +197,7 @@ public class TeacherController {
     try {
       GetUserDto user = service.getTeacherByEmail(email);
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, user)
+              new ResponseDto("User found successfully", true, user)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -211,7 +211,7 @@ public class TeacherController {
     try {
       GetUserDto user = service.getTeacherByDocument(document);
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, user)
+              new ResponseDto("User found successfully", true, user)
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

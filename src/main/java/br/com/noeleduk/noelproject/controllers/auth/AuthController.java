@@ -20,7 +20,7 @@ public class AuthController {
     try {
 
       return ResponseEntity.ok().body(
-              new ResponseDto("User found", true, service.login(login))
+              new ResponseDto("User found successfully", true, service.login(login))
       );
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
