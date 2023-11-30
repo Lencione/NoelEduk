@@ -15,6 +15,7 @@ public class GetUserLessonsDto {
   private String subjectTeacherName;
   private String description;
   private String justification;
+  private boolean status;
   private boolean exam;
   private boolean active;
   private int weekOfYear;

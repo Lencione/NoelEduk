@@ -41,8 +41,8 @@ public class SubjectService {
     subject.setTeacher(teacher);
     subject.setGoogleCode(request.getGoogle_code());
     subject.setWeek_day(request.getWeek_day());
-    subject.setStart_date(getDateFromLocalDate(request.getStart_date()));
-    subject.setEnd_date(getDateFromLocalDate(request.getEnd_date()));
+    subject.setStart_date(request.getStart_date());
+    subject.setEnd_date(request.getEnd_date());
     return repository.save(subject);
   }
 
@@ -51,15 +51,15 @@ public class SubjectService {
   }
 
   private void generateLessons(SubjectEntity subject) {
-    LocalDate initialDate = subject.getStart_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay().toLocalDate();
+    LocalDate initialDate = subject.getStart_date();
     int currentWeekDay = initialDate.getDayOfWeek().getValue();
     int daysUntilNextWeekDay = (subject.getWeek_day() - currentWeekDay + 7) % 7;
     LocalDate nextWeekDay = initialDate.plusDays(daysUntilNextWeekDay);
-    LocalDate endDate = subject.getEnd_date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay().toLocalDate();
+    LocalDate endDate = subject.getEnd_date();
 
     while (nextWeekDay.isBefore(endDate) || nextWeekDay.isEqual(endDate)) {
       CreateLessonDto lesson = new CreateLessonDto(
-              LocalDate.from(nextWeekDay.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+              nextWeekDay,
               subject
       );
       lessonService.create(lesson);
@@ -78,9 +78,12 @@ public class SubjectService {
     for (Object[] result : results) {
       GetUserPresenceDto userPresenceDto = new GetUserPresenceDto();
       userPresenceDto.setSubjectName((String) result[0]);
-      userPresenceDto.setTotal((Long) result[1]);
-      userPresenceDto.setPresences((Long) result[2]);
-      userPresenceDto.setFouls((Long) result[3]);
+      userPresenceDto.setTeacherName((String) result[1]);
+      userPresenceDto.setGoogleCode((String) result[2]);
+      userPresenceDto.setTotal((Long) result[3]);
+      userPresenceDto.setPresences((Long) result[4]);
+      userPresenceDto.setFouls((Long) result[5]);
+
       userPresenceDtoList.add(userPresenceDto);
     }
 
