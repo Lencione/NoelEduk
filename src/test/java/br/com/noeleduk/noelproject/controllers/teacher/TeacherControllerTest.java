@@ -82,8 +82,8 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void getStudentsByClassId_withValidData_returnsClass() {
-        when(teacherService.getStudentsByClassId(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenReturn(GET_STUDENT_DTO_LIST);
+    public void getStudentsByClassId_withValidData_returnsStudentList() {
+        when(teacherService.getStudentsByClassId(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenReturn(GET_USER_DTO_LIST);
 
         ResponseEntity<ResponseDto> sut = teacherController.getStudentsByClassId(MOCK_UUID_1, MOCK_DOCUMENT_1);
 
@@ -102,7 +102,7 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void getSubjects_withValidTeacherDocument_returnsClasses() {
+    public void getSubjects_withValidTeacherDocument_returnsSubjects() {
         when(teacherService.getSubjectsByTeacherDocument(MOCK_DOCUMENT_1)).thenReturn(GET_SUBJECT_DTO_LIST);
 
         ResponseEntity<ResponseDto> sut = teacherController.getSubjects(MOCK_DOCUMENT_1);
@@ -122,7 +122,7 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void createSubjects_withValidData_returnsClasses() {
+    public void createSubjects_withValidData_returnsSubject() {
         when(teacherService.createSubject(MOCK_DOCUMENT_1, CREATE_SUBJECT_DTO)).thenReturn(GET_SUBJECT_DTO_1);
 
         ResponseEntity<ResponseDto> sut = teacherController.createSubject(MOCK_DOCUMENT_1, CREATE_SUBJECT_DTO);
@@ -142,7 +142,7 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void addClass_withValidData_returnsClasses() {
+    public void addClass_withValidData_returnsClassList() {
         when(teacherService.addClassToSubject(MOCK_DOCUMENT_1, MOCK_UUID_1, ADD_CLASS_TO_SUBJECT_DTO)).thenReturn(ADD_CLASS_TO_SUBJECT_LIST);
 
         ResponseEntity<ResponseDto> sut = teacherController.addClass(MOCK_DOCUMENT_1, MOCK_UUID_1, ADD_CLASS_TO_SUBJECT_DTO);
@@ -162,8 +162,8 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void getStudentsBySubjectId_withValidData_returnsClasses() {
-        when(teacherService.getStudentsBySubjectId(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenReturn(GET_STUDENT_DTO_LIST);
+    public void getStudentsBySubjectId_withValidData_returnsStudent() {
+        when(teacherService.getStudentsBySubjectId(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenReturn(GET_USER_DTO_LIST);
 
         ResponseEntity<ResponseDto> sut = teacherController.getStudentsBySubjectId(MOCK_UUID_1, MOCK_DOCUMENT_1);
 
@@ -182,7 +182,7 @@ public class TeacherControllerTest {
     }
 
     @Test
-    public void getLessonsByTeacherDocument_withValidData_returnsClasses() {
+    public void getLessonsByTeacherDocument_withValidData_returnsLessonsList() {
         when(teacherService.getLessonsByTeacherDocument(MOCK_DOCUMENT_1)).thenReturn(GET_FORMATTED_LESSONS_DTO_LIST);
 
         ResponseEntity<ResponseDto> sut = teacherController.getLessonsByTeacherDocument(MOCK_DOCUMENT_1);
@@ -199,5 +199,105 @@ public class TeacherControllerTest {
 
         verify(teacherService, times(1)).getLessonsByTeacherDocument(MOCK_DOCUMENT_1);
         assertThat(sut).isEqualTo(INVALID_GET_LESSONS_BY_TEACHER_DOCUMENT_RESPONSE);
+    }
+
+    @Test
+    public void createLessonToken_withValidData_returnsToken() {
+        when(teacherService.createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenReturn(MOCK_TOKEN_1);
+
+        ResponseEntity<ResponseDto> sut = teacherController.createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1);
+
+        verify(teacherService, times(1)).createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1);
+        assertThat(sut).isEqualTo(CREATE_LESSON_TOKEN_RESPONSE);
+    }
+
+    @Test
+    void createLessonToken_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        when(teacherService.createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
+
+        ResponseEntity<ResponseDto> sut = teacherController.createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1);
+
+        verify(teacherService, times(1)).createLessonToken(MOCK_DOCUMENT_1, MOCK_UUID_1);
+        assertThat(sut).isEqualTo(INVALID_CREATE_LESSON_TOKEN_RESPONSE);
+    }
+
+    @Test
+    public void markPresences_withValidData_returnsPresenceList() {
+        when(teacherService.markPresenceToStudent(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO)).thenReturn(MARK_USER_PRESENCE_LIST);
+
+        ResponseEntity<ResponseDto> sut = teacherController.markPresences(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO);
+
+        verify(teacherService, times(1)).markPresenceToStudent(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO);
+        assertThat(sut).isEqualTo(MARK_LESSON_STUDENT_PRESENCE_DTO_RESPONSE);
+    }
+
+    @Test
+    void markPresences_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        when(teacherService.markPresenceToStudent(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO)).thenThrow(new RuntimeException(INVALID_TEACHER_DOCUMENT));
+
+        ResponseEntity<ResponseDto> sut = teacherController.markPresences(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO);
+
+        verify(teacherService, times(1)).markPresenceToStudent(MOCK_DOCUMENT_1, MOCK_UUID_1, MARK_LESSON_STUDENT_PRESENCE_DTO);
+        assertThat(sut).isEqualTo(INVALID_MARK_LESSON_STUDENT_PRESENCE_DTO_RESPONSE);
+    }
+
+    @Test
+    public void getAllTeachers_withValidData_returnsTeachers() {
+        when(teacherService.getAllTeachers()).thenReturn(GET_USER_DTO_LIST);
+
+        ResponseEntity<ResponseDto> sut = teacherController.getAllTeachers();
+
+        verify(teacherService, times(1)).getAllTeachers();
+        assertThat(sut).isEqualTo(GET_ALL_TEACHERS_RESPONSE);
+    }
+
+    @Test
+    void getAllTeachers_withTeachersNotFound_returnsNotFound() {
+        when(teacherService.getAllTeachers()).thenThrow(new RuntimeException(TEACHERS_NOT_FOUND));
+
+        ResponseEntity<ResponseDto> sut = teacherController.getAllTeachers();
+
+        verify(teacherService, times(1)).getAllTeachers();
+        assertThat(sut).isEqualTo(NOT_FOUND_TEACHERS_RESPONSE);
+    }
+
+    @Test
+    public void getUserByEmail_withValidData_returnsUser() {
+        when(teacherService.getTeacherByEmail(GET_USER_DTO_1.getEmail())).thenReturn(GET_USER_DTO_1);
+
+        ResponseEntity<ResponseDto> sut = teacherController.getUserByEmail(GET_USER_DTO_1.getEmail());
+
+        verify(teacherService, times(1)).getTeacherByEmail(GET_USER_DTO_1.getEmail());
+        assertThat(sut).isEqualTo(GET_TEACHER_BY_EMAIL_RESPONSE);
+    }
+
+    @Test
+    void getUserByEmail_withUserNotFound_returnsNotFound() {
+        when(teacherService.getTeacherByEmail(GET_USER_DTO_1.getEmail())).thenThrow(new RuntimeException(TEACHER_NOT_FOUND));
+
+        ResponseEntity<ResponseDto> sut = teacherController.getUserByEmail(GET_USER_DTO_1.getEmail());
+
+        verify(teacherService, times(1)).getTeacherByEmail(GET_USER_DTO_1.getEmail());
+        assertThat(sut).isEqualTo(NOT_FOUND_TEACHER_RESPONSE);
+    }
+
+    @Test
+    public void getUserByDocument_withValidData_returnsUser() {
+        when(teacherService.getTeacherByDocument(GET_USER_DTO_1.getDocument())).thenReturn(GET_USER_DTO_1);
+
+        ResponseEntity<ResponseDto> sut = teacherController.getUserByDocument(GET_USER_DTO_1.getDocument());
+
+        verify(teacherService, times(1)).getTeacherByDocument(GET_USER_DTO_1.getDocument());
+        assertThat(sut).isEqualTo(GET_TEACHER_BY_DOCUMENT_RESPONSE);
+    }
+
+    @Test
+    void getUserByDocument_withUserNotFound_returnsNotFound() {
+        when(teacherService.getTeacherByDocument(GET_USER_DTO_1.getDocument())).thenThrow(new RuntimeException(TEACHER_NOT_FOUND));
+
+        ResponseEntity<ResponseDto> sut = teacherController.getUserByDocument(GET_USER_DTO_1.getDocument());
+
+        verify(teacherService, times(1)).getTeacherByDocument(GET_USER_DTO_1.getDocument());
+        assertThat(sut).isEqualTo(NOT_FOUND_TEACHER_RESPONSE);
     }
 }
