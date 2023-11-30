@@ -63,10 +63,10 @@ public class ClassConstraints {
     public static final AddStudentToClassDto ADD_STUDENT_TO_CLASS_DTO = new AddStudentToClassDto(MOCK_DOCUMENT_LIST);
     public static final CreateSubjectDto CREATE_SUBJECT_DTO = new CreateSubjectDto("Banco De Dados 3", "Vs21de", 3, LocalDate.now(), LocalDate.now());
     public static final AddClassToSubjectDto ADD_CLASS_TO_SUBJECT_DTO = new AddClassToSubjectDto(Arrays.asList(MOCK_UUID_1, MOCK_UUID_2));
-    public static final GetLessonDto GET_LESSON_DTO_1 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de JDBC", "Programação Orientada a Objetos", "Marco Miquelino", "Justificação", true, true, 12);
-    public static final GetLessonDto GET_LESSON_DTO_2 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de SQL", "Banco de Dados 3", "Luciano Calderoni", "Justificação", true, true, 12);
-    public static final GetLessonDto GET_LESSON_DTO_3 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de LISTA", "Estrutura de Dados", "Carlos Miglinks", "Justificação", true, true, 8);
-    public static final GetLessonDto GET_LESSON_DTO_4 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de REDES", "Redes Móveis", "Nadir Dias", "Justificação", true, true, 8);
+    public static final GetLessonDto GET_LESSON_DTO_1 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de JDBC", "123456","Programação Orientada a Objetos", "Marco Miquelino", "Justificação", true, true, 12);
+    public static final GetLessonDto GET_LESSON_DTO_2 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de SQL", "654321","Banco de Dados 3", "Luciano Calderoni", "Justificação", true, true, 12);
+    public static final GetLessonDto GET_LESSON_DTO_3 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de LISTA", "123654","Estrutura de Dados", "Carlos Miglinks", "Justificação", true, true, 8);
+    public static final GetLessonDto GET_LESSON_DTO_4 = new GetLessonDto(MOCK_UUID_1, LocalDate.now(), "Conceitos avançados de REDES", "654123","Redes Móveis", "Nadir Dias", "Justificação", true, true, 8);
     public static final MarkUserPresenceDto MARK_USER_PRESENCE_DTO = new MarkUserPresenceDto(MOCK_TOKEN_1);
     public static final MarkLessonStudentPresenceDto MARK_LESSON_STUDENT_PRESENCE_DTO = new MarkLessonStudentPresenceDto(Arrays.asList(MOCK_DOCUMENT_1, MOCK_DOCUMENT_2));
 
