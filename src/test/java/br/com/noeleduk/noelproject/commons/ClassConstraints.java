@@ -11,7 +11,9 @@ import br.com.noeleduk.noelproject.dto.response.ResponseDto;
 import br.com.noeleduk.noelproject.dto.subjects.AddClassToSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.CreateSubjectDto;
 import br.com.noeleduk.noelproject.dto.subjects.GetSubjectDto;
+import br.com.noeleduk.noelproject.dto.user.GetStudentCardDto;
 import br.com.noeleduk.noelproject.dto.user.GetUserDto;
+import br.com.noeleduk.noelproject.dto.user.GetUserPresenceDto;
 import br.com.noeleduk.noelproject.dto.user.MarkUserPresenceDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +59,10 @@ public class ClassConstraints {
     public static final String CLASS_ADDED_TO_SUBJECT = "Class added to subject successfully";
     public static final String INVALID_TEACHER_DOCUMENT = "Invalid teacher document";
     public static final String PRESENCES_MARKED = "Presences marked successfully";
+    public static final String PRESENCE_MARKED = "Presence marked";
+    public static final String CARD_FOUND = "Card found successfully";
+    public static final String PRESENCES_FOUND = "Presences found successfully";
+    public static final String INVALID_STUDENT_DOCUMENT = "Invalid student document";
 
     // DTOs
     public static final CreateClassDto CREATE_CLASS_DTO = new CreateClassDto("Banco de Dados 2", 4);
@@ -79,6 +85,9 @@ public class ClassConstraints {
     public static final GetUserLessonsDto GET_USER_LESSONS_DTO_4 = new GetUserLessonsDto(LocalDate.now(), "654123","Conceitos avançados de REDES", "Nadir Dias","Redes Móveis", "Justificação", true, true, true, 8);
     public static final MarkUserPresenceDto MARK_USER_PRESENCE_DTO = new MarkUserPresenceDto(MOCK_TOKEN_1);
     public static final MarkLessonStudentPresenceDto MARK_LESSON_STUDENT_PRESENCE_DTO = new MarkLessonStudentPresenceDto(Arrays.asList(MOCK_DOCUMENT_1, MOCK_DOCUMENT_2));
+    public static final GetStudentCardDto GET_STUDENT_CARD_DTO = new GetStudentCardDto("Rafael Henrique Menegon", "12224578", "641075498", "5134785205", "yes", "Ciência da Computação", "https://gravatar.com/avatar/dd95411d45214301e2673e1c6a8f5d47?s=400&d=robohash&r=x");
+    public static final GetUserPresenceDto GET_USER_PRESENCE_DTO_1 = new GetUserPresenceDto("POO", (long) 2, (long) 3, (long) 4, "asdasd", "Marco Miquelino");
+    public static final GetUserPresenceDto GET_USER_PRESENCE_DTO_2 = new GetUserPresenceDto("BD", (long) 2, (long) 3, (long) 4, "asdasd", "Luciano Calderoni");
 
     // Lists
     public static final List<GetClassDto> GET_CLASS_DTO_LIST = Arrays.asList(GET_CLASS_DTO_1, GET_CLASS_DTO_2);
@@ -93,6 +102,7 @@ public class ClassConstraints {
     public static final List<GetFormattedLessonsDto<GetLessonDto>> GET_FORMATTED_LESSONS_DTO_LIST = Arrays.asList(GET_FORMATTED_LESSONS_DTO_1, GET_FORMATTED_LESSONS_DTO_2);
     public static final List<GetFormattedLessonsDto<GetUserLessonsDto>> GET_FORMATTED_USER_LESSONS_DTO_LIST = Arrays.asList(GET_FORMATTED_USER_LESSONS_DTO_1, GET_FORMATTED_USER_LESSONS_DTO_2);
     public static final List<String> MARK_USER_PRESENCE_LIST = Arrays.asList("Rafael Menegon is already marked as present", "Glauber Silva marked as present");
+    public static final List<GetUserPresenceDto> GET_USER_PRESENCE_DTO_LIST = Arrays.asList(GET_USER_PRESENCE_DTO_1, GET_USER_PRESENCE_DTO_2);
 
     // Responses
     public static final ResponseEntity<ResponseDto> CREATE_CLASS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(CLASS_CREATED, true, CLASS_CREATED));
@@ -117,7 +127,6 @@ public class ClassConstraints {
     public static final ResponseEntity<ResponseDto> CREATE_LESSON_TOKEN_RESPONSE = ResponseEntity.ok().body(new ResponseDto(TOKEN_CREATED, true, MOCK_TOKEN_1));
     public static final ResponseEntity<ResponseDto> INVALID_CREATE_LESSON_TOKEN_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(INVALID_TEACHER_DOCUMENT, false, null));
     public static final ResponseEntity<ResponseDto> MARK_LESSON_STUDENT_PRESENCE_DTO_RESPONSE = ResponseEntity.ok().body(new ResponseDto(PRESENCES_MARKED, true, MARK_USER_PRESENCE_LIST));
-
     public static final ResponseEntity<ResponseDto> INVALID_MARK_LESSON_STUDENT_PRESENCE_DTO_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(INVALID_TEACHER_DOCUMENT, false, null));
     public static final ResponseEntity<ResponseDto> GET_ALL_TEACHERS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(TEACHERS_FOUND, true, GET_USER_DTO_LIST));
     public static final ResponseEntity<ResponseDto> GET_ALL_USERS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USERS_FOUND, true, GET_USER_DTO_LIST));
@@ -130,5 +139,7 @@ public class ClassConstraints {
     public static final ResponseEntity<ResponseDto> GET_TEACHER_BY_DOCUMENT_RESPONSE = ResponseEntity.ok().body(new ResponseDto(USER_FOUND, true, GET_USER_DTO_1));
     public static final ResponseEntity<ResponseDto> GET_STUDENT_LESSONS_RESPONSE = ResponseEntity.ok().body(new ResponseDto(LESSONS_FOUND, true, GET_FORMATTED_USER_LESSONS_DTO_LIST));
     public static final ResponseEntity<ResponseDto> NOT_FOUND_LESSONS_RESPONSE = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseDto(LESSONS_NOT_FOUND, false, null));
-
+    public static final ResponseEntity<ResponseDto> MARK_USER_PRESENCE_RESPONSE = ResponseEntity.ok().body(new ResponseDto(PRESENCE_MARKED, true, "Success"));
+    public static final ResponseEntity<ResponseDto> GET_STUDENT_CARD_RESPONSE = ResponseEntity.ok().body(new ResponseDto(CARD_FOUND, true, GET_STUDENT_CARD_DTO));
+    public static final ResponseEntity<ResponseDto> GET_USER_PRESENCES_RESPONSE = ResponseEntity.ok().body(new ResponseDto(PRESENCES_FOUND, true, GET_USER_PRESENCE_DTO_LIST));
 }

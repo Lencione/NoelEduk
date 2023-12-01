@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
@@ -80,6 +81,65 @@ public class UserControllerTest {
         ResponseEntity<ResponseDto> sut = userController.getUserByEmail(GET_USER_DTO_1.getEmail());
 
         verify(userService, times(1)).getUserByEmail(GET_USER_DTO_1.getEmail());
+        assertThat(sut).isEqualTo(NOT_FOUND_USER_RESPONSE);
+    }
+
+    @Test
+    public void markPresence_withValidData_returnsVoid() {
+        Mockito.doNothing().when(userService).markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+
+        ResponseEntity<ResponseDto> sut = userController.markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+
+        verify(userService, times(1)).markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+        assertThat(sut).isEqualTo(MARK_USER_PRESENCE_RESPONSE);
+    }
+    @Test
+    void markPresence_withInvalidTeacherDocument_returnsInvalidTeacher() {
+        Mockito.doThrow(new RuntimeException(USER_NOT_FOUND)).when(userService).markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+
+        ResponseEntity<ResponseDto> sut = userController.markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+
+        verify(userService, times(1)).markPresence(MOCK_DOCUMENT_1, MARK_USER_PRESENCE_DTO);
+        assertThat(sut).isEqualTo(NOT_FOUND_USER_RESPONSE);
+    }
+
+    @Test
+    public void getStudentCard_withValidData_returnsCard() {
+        when(userService.getStudentCard(MOCK_DOCUMENT_1)).thenReturn(GET_STUDENT_CARD_DTO);
+
+        ResponseEntity<ResponseDto> sut = userController.getStudentCard(MOCK_DOCUMENT_1);
+
+        verify(userService, times(1)).getStudentCard(MOCK_DOCUMENT_1);
+        assertThat(sut).isEqualTo(GET_STUDENT_CARD_RESPONSE);
+    }
+
+    @Test
+    void getStudentCard_withUserNotFound_returnsNotFound() {
+        when(userService.getStudentCard(MOCK_DOCUMENT_1)).thenThrow(new RuntimeException(USER_NOT_FOUND));
+
+        ResponseEntity<ResponseDto> sut = userController.getStudentCard(MOCK_DOCUMENT_1);
+
+        verify(userService, times(1)).getStudentCard(MOCK_DOCUMENT_1);
+        assertThat(sut).isEqualTo(NOT_FOUND_USER_RESPONSE);
+    }
+
+    @Test
+    public void getUserPresences_withValidData_returnsPresenceList() {
+        when(userService.getUserPresences(MOCK_DOCUMENT_1)).thenReturn(GET_USER_PRESENCE_DTO_LIST);
+
+        ResponseEntity<ResponseDto> sut = userController.getUserPresences(MOCK_DOCUMENT_1);
+
+        verify(userService, times(1)).getUserPresences(MOCK_DOCUMENT_1);
+        assertThat(sut).isEqualTo(GET_USER_PRESENCES_RESPONSE);
+    }
+
+    @Test
+    void getUserPresences_withUserNotFound_returnsNotFound() {
+        when(userService.getUserPresences(MOCK_DOCUMENT_1)).thenThrow(new RuntimeException(USER_NOT_FOUND));
+
+        ResponseEntity<ResponseDto> sut = userController.getUserPresences(MOCK_DOCUMENT_1);
+
+        verify(userService, times(1)).getUserPresences(MOCK_DOCUMENT_1);
         assertThat(sut).isEqualTo(NOT_FOUND_USER_RESPONSE);
     }
 }
